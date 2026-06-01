@@ -3,9 +3,9 @@ set -euo pipefail
 source "$(cd "$(dirname "$0")" && pwd)/lib/common.sh"
 setup_runtime_env
 
-if [[ ! -d "${RUNS_DIR}/acts_r110_c100" ]]; then
+if ! cache_ready "${RUNS_DIR}/acts_r110_c100"; then
   echo "acts_r110_c100 missing; generating cache first"
-  "${LISP_3_SETUP}/bin/cache_acts.sh"
+  "${LISP_3_SETUP}/bin/cache_acts.sh" r110
 fi
 
 IFS=',' read -r -a GPUS <<< "${GPU_LIST_PRIMARY}"

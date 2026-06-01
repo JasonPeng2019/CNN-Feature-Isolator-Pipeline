@@ -56,7 +56,16 @@ for f in \
 done
 
 echo "\n[Blocked-artifact expectations]"
-for d in "${RUNS_DIR}/acts_r20_c10" "${RUNS_DIR}/acts_r110_c100" "${RUNS_DIR}/taxonomy" "${RUNS_DIR}/vit_sae"; do
+for d in "${RUNS_DIR}/acts_r20_c10" "${RUNS_DIR}/acts_r56_c100" "${RUNS_DIR}/acts_r110_c100"; do
+  if cache_ready "$d"; then
+    echo "READY cache $d"
+  elif [[ -d "$d" ]]; then
+    echo "INCOMPLETE cache $d"
+  else
+    echo "MISSING cache $d"
+  fi
+done
+for d in "${RUNS_DIR}/taxonomy" "${RUNS_DIR}/vit_sae"; do
   if [[ -e "$d" ]]; then echo "PRESENT $d"; else echo "MISSING $d"; fi
 done
 

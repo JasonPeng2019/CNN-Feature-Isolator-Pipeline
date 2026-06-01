@@ -139,6 +139,32 @@ require_path() {
   fi
 }
 
+cache_ready() {
+  local d="$1"
+  local q
+  local split
+  if [[ ! -d "${d}" ]]; then
+    return 1
+  fi
+  if [[ ! -f "${d}/norm_stats.json" ]]; then
+    return 1
+  fi
+  for split in train test; do
+    for q in Q1 Q2 Q3 Q4 Q5; do
+      if [[ ! -f "${d}/${split}_${q}.pt" ]]; then
+        return 1
+      fi
+    done
+    if [[ ! -f "${d}/${split}_logits.pt" ]]; then
+      return 1
+    fi
+    if [[ ! -f "${d}/${split}_labels.pt" ]]; then
+      return 1
+    fi
+  done
+  return 0
+}
+
 gpu_csv_to_first() {
   local csv="$1"
   echo "${csv%%,*}"

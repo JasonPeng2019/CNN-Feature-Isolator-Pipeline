@@ -3,8 +3,8 @@ set -euo pipefail
 source "$(cd "$(dirname "$0")" && pwd)/lib/common.sh"
 setup_runtime_env
 
-if [[ ! -d "${RUNS_DIR}/acts_r56_c100" ]]; then
-  echo "ERROR: runs/acts_r56_c100 missing; cannot run taxonomy" >&2
+if ! cache_ready "${RUNS_DIR}/acts_r56_c100"; then
+  echo "ERROR: runs/acts_r56_c100 missing/incomplete; cannot run taxonomy" >&2
   exit 1
 fi
 

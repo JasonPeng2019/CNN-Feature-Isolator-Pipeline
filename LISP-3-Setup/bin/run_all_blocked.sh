@@ -7,8 +7,9 @@ setup_runtime_env
 run_step() {
   local name="$1"
   local script="$2"
+  shift 2
   echo "\n=== STEP: ${name} ==="
-  if ! "${script}"; then
+  if ! "${script}" "$@"; then
     echo "STEP FAILED: ${name}" >&2
     if [[ "${CONTINUE_ON_ERROR}" != "true" ]]; then
       echo "CONTINUE_ON_ERROR=${CONTINUE_ON_ERROR}; stopping." >&2
@@ -19,7 +20,7 @@ run_step() {
 
 run_step "preflight" "${LISP_3_SETUP}/bin/preflight.sh"
 run_step "ensure_prereqs" "${LISP_3_SETUP}/bin/ensure_prereqs.sh"
-run_step "cache_acts" "${LISP_3_SETUP}/bin/cache_acts.sh"
+run_step "cache_primary_acts" "${LISP_3_SETUP}/bin/cache_acts.sh" primary
 run_step "r20c10" "${LISP_3_SETUP}/bin/run_r20c10.sh"
 run_step "seeds" "${LISP_3_SETUP}/bin/run_seeds.sh"
 run_step "taxonomy" "${LISP_3_SETUP}/bin/run_taxonomy.sh"

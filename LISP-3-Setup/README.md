@@ -27,6 +27,7 @@ bin/preflight.sh
 bin/bootstrap_env.sh
 
 # 3) run primary blocked grids (2 GPUs)
+# auto-builds only required caches: acts_r20_c10 + acts_r56_c100
 bin/run_r20c10.sh
 bin/run_seeds.sh
 
@@ -37,6 +38,18 @@ bin/run_vit_sae.sh
 
 # or run ordered full pipeline
 bin/run_all_blocked.sh
+```
+
+## Cache builder targets
+
+Use targeted cache generation to avoid unnecessary storage:
+
+```bash
+bin/cache_acts.sh r20      # runs/acts_r20_c10
+bin/cache_acts.sh r56      # runs/acts_r56_c100
+bin/cache_acts.sh r110     # runs/acts_r110_c100
+bin/cache_acts.sh primary  # r20 + r56
+bin/cache_acts.sh all      # r20 + r56 + r110
 ```
 
 ## Primary targets
@@ -83,4 +96,4 @@ Current preflight should report:
 - CUDA usable
 - `timm` missing (gates `run_vit_sae.sh` unless installed)
 - `.cudnn12` override missing (acceptable if system CUDA stack is healthy)
-- `runs/acts_r20_c10` and `runs/acts_r110_c100` missing (created by `cache_acts.sh`)
+- `runs/acts_r20_c10`, `runs/acts_r56_c100`, and `runs/acts_r110_c100` may be missing initially
