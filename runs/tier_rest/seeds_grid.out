@@ -1,0 +1,32 @@
+15 jobs on gpus [0, 1]
+LAUNCH gpu0 runs/seeds/S_Q1_s0
+LAUNCH gpu1 runs/seeds/S_Q1_s1
+FINISH gpu0 rc=1 ok=False runs/seeds/S_Q1_s0
+FINISH gpu1 rc=1 ok=False runs/seeds/S_Q1_s1
+LAUNCH gpu0 runs/seeds/S_Q1_s2
+LAUNCH gpu1 runs/seeds/S_Q2_s0
+FINISH gpu0 rc=1 ok=False runs/seeds/S_Q1_s2
+FINISH gpu1 rc=1 ok=False runs/seeds/S_Q2_s0
+LAUNCH gpu0 runs/seeds/S_Q2_s1
+LAUNCH gpu1 runs/seeds/S_Q2_s2
+FINISH gpu0 rc=1 ok=False runs/seeds/S_Q2_s1
+FINISH gpu1 rc=1 ok=False runs/seeds/S_Q2_s2
+LAUNCH gpu0 runs/seeds/S_Q3_s0
+LAUNCH gpu1 runs/seeds/S_Q3_s1
+FINISH gpu0 rc=1 ok=False runs/seeds/S_Q3_s0
+FINISH gpu1 rc=1 ok=False runs/seeds/S_Q3_s1
+LAUNCH gpu0 runs/seeds/S_Q3_s2
+LAUNCH gpu1 runs/seeds/S_Q4_s0
+FINISH gpu0 rc=1 ok=False runs/seeds/S_Q3_s2
+FINISH gpu1 rc=1 ok=False runs/seeds/S_Q4_s0
+LAUNCH gpu0 runs/seeds/S_Q4_s1
+LAUNCH gpu1 runs/seeds/S_Q4_s2
+FINISH gpu0 rc=1 ok=False runs/seeds/S_Q4_s1
+FINISH gpu1 rc=1 ok=False runs/seeds/S_Q4_s2
+LAUNCH gpu0 runs/seeds/S_Q5_s0
+LAUNCH gpu1 runs/seeds/S_Q5_s1
+FINISH gpu0 rc=1 ok=False runs/seeds/S_Q5_s0
+FINISH gpu1 rc=1 ok=False runs/seeds/S_Q5_s1
+LAUNCH gpu0 runs/seeds/S_Q5_s2
+FINISH gpu0 rc=1 ok=False runs/seeds/S_Q5_s2
+GRID DONE 0/15 ok

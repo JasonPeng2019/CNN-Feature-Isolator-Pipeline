@@ -1,0 +1,39 @@
+/home/goutham/miniconda3/lib/python3.13/site-packages/torch/cuda/__init__.py:184: UserWarning: CUDA initialization: CUDA unknown error - this may be due to an incorrectly set up environment, e.g. changing env variable CUDA_VISIBLE_DEVICES after program start. Setting the available devices to be zero. (Triggered internally at /pytorch/c10/cuda/CUDAFunctions.cpp:119.)
+  return torch._C._cuda_getDeviceCount() > 0
+Traceback (most recent call last):
+  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/cache_activations.py", line 65, in <module>
+    main()
+    ~~~~^^
+  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/cache_activations.py", line 55, in main
+    model, ck = load_backbone(args.ckpt, args.device)
+                ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/cache_activations.py", line 12, in load_backbone
+    ck = torch.load(ckpt_path, map_location=device)
+  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/serialization.py", line 1540, in load
+    return _load(
+        opened_zipfile,
+    ...<3 lines>...
+        **pickle_load_args,
+    )
+  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/serialization.py", line 2143, in _load
+    result = unpickler.load()
+  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/_weights_only_unpickler.py", line 539, in load
+    self.append(self.persistent_load(pid))
+                ~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/serialization.py", line 2107, in persistent_load
+    typed_storage = load_tensor(
+        dtype, nbytes, key, _maybe_decode_ascii(location)
+    )
+  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/serialization.py", line 2073, in load_tensor
+    wrap_storage = restore_location(storage, location)
+  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/serialization.py", line 1879, in restore_location
+    return default_restore_location(storage, map_location)
+  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/serialization.py", line 707, in default_restore_location
+    result = fn(storage, location)
+  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/serialization.py", line 640, in _deserialize
+    device = _validate_device(location, backend_name)
+  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/serialization.py", line 609, in _validate_device
+    raise RuntimeError(
+    ...<5 lines>...
+    )
+RuntimeError: Attempting to deserialize object on a CUDA device but torch.cuda.is_available() is False. If you are running on a CPU-only machine, please use torch.load with map_location=torch.device('cpu') to map your storages to the CPU.

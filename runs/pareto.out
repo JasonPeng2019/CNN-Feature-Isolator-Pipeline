@@ -1,0 +1,72 @@
+35 jobs on gpus [1, 2, 3]
+LAUNCH gpu1 runs/pareto/F_Q1_f0.01
+LAUNCH gpu2 runs/pareto/F_Q1_f0.02
+LAUNCH gpu3 runs/pareto/F_Q1_f0.03
+FINISH gpu1 rc=0 ok=True runs/pareto/F_Q1_f0.01
+FINISH gpu2 rc=0 ok=True runs/pareto/F_Q1_f0.02
+LAUNCH gpu1 runs/pareto/F_Q1_f0.05
+LAUNCH gpu2 runs/pareto/F_Q1_f0.08
+FINISH gpu3 rc=0 ok=True runs/pareto/F_Q1_f0.03
+LAUNCH gpu3 runs/pareto/F_Q1_f0.12
+FINISH gpu1 rc=0 ok=True runs/pareto/F_Q1_f0.05
+LAUNCH gpu1 runs/pareto/F_Q1_f0.2
+FINISH gpu2 rc=0 ok=True runs/pareto/F_Q1_f0.08
+LAUNCH gpu2 runs/pareto/F_Q2_f0.01
+FINISH gpu3 rc=0 ok=True runs/pareto/F_Q1_f0.12
+LAUNCH gpu3 runs/pareto/F_Q2_f0.02
+FINISH gpu2 rc=0 ok=True runs/pareto/F_Q2_f0.01
+LAUNCH gpu2 runs/pareto/F_Q2_f0.03
+FINISH gpu1 rc=0 ok=True runs/pareto/F_Q1_f0.2
+LAUNCH gpu1 runs/pareto/F_Q2_f0.05
+FINISH gpu3 rc=0 ok=True runs/pareto/F_Q2_f0.02
+LAUNCH gpu3 runs/pareto/F_Q2_f0.08
+FINISH gpu2 rc=0 ok=True runs/pareto/F_Q2_f0.03
+LAUNCH gpu2 runs/pareto/F_Q2_f0.12
+FINISH gpu1 rc=0 ok=True runs/pareto/F_Q2_f0.05
+LAUNCH gpu1 runs/pareto/F_Q2_f0.2
+FINISH gpu3 rc=0 ok=True runs/pareto/F_Q2_f0.08
+LAUNCH gpu3 runs/pareto/F_Q3_f0.01
+FINISH gpu2 rc=0 ok=True runs/pareto/F_Q2_f0.12
+LAUNCH gpu2 runs/pareto/F_Q3_f0.02
+FINISH gpu1 rc=0 ok=True runs/pareto/F_Q2_f0.2
+LAUNCH gpu1 runs/pareto/F_Q3_f0.03
+FINISH gpu3 rc=0 ok=True runs/pareto/F_Q3_f0.01
+LAUNCH gpu3 runs/pareto/F_Q3_f0.05
+FINISH gpu2 rc=0 ok=True runs/pareto/F_Q3_f0.02
+LAUNCH gpu2 runs/pareto/F_Q3_f0.08
+FINISH gpu1 rc=0 ok=True runs/pareto/F_Q3_f0.03
+LAUNCH gpu1 runs/pareto/F_Q3_f0.12
+FINISH gpu3 rc=0 ok=True runs/pareto/F_Q3_f0.05
+LAUNCH gpu3 runs/pareto/F_Q3_f0.2
+FINISH gpu2 rc=0 ok=True runs/pareto/F_Q3_f0.08
+LAUNCH gpu2 runs/pareto/F_Q4_f0.01
+FINISH gpu1 rc=0 ok=True runs/pareto/F_Q3_f0.12
+LAUNCH gpu1 runs/pareto/F_Q4_f0.02
+FINISH gpu2 rc=0 ok=True runs/pareto/F_Q4_f0.01
+LAUNCH gpu2 runs/pareto/F_Q4_f0.03
+FINISH gpu3 rc=0 ok=True runs/pareto/F_Q3_f0.2
+LAUNCH gpu3 runs/pareto/F_Q4_f0.05
+FINISH gpu1 rc=0 ok=True runs/pareto/F_Q4_f0.02
+LAUNCH gpu1 runs/pareto/F_Q4_f0.08
+FINISH gpu2 rc=0 ok=True runs/pareto/F_Q4_f0.03
+LAUNCH gpu2 runs/pareto/F_Q4_f0.12
+FINISH gpu1 rc=0 ok=True runs/pareto/F_Q4_f0.08
+LAUNCH gpu1 runs/pareto/F_Q4_f0.2
+FINISH gpu3 rc=0 ok=True runs/pareto/F_Q4_f0.05
+LAUNCH gpu3 runs/pareto/F_Q5_f0.01
+FINISH gpu2 rc=-11 ok=True runs/pareto/F_Q4_f0.12
+LAUNCH gpu2 runs/pareto/F_Q5_f0.02
+FINISH gpu1 rc=0 ok=True runs/pareto/F_Q4_f0.2
+LAUNCH gpu1 runs/pareto/F_Q5_f0.03
+FINISH gpu3 rc=0 ok=True runs/pareto/F_Q5_f0.01
+LAUNCH gpu3 runs/pareto/F_Q5_f0.05
+FINISH gpu2 rc=0 ok=True runs/pareto/F_Q5_f0.02
+LAUNCH gpu2 runs/pareto/F_Q5_f0.08
+FINISH gpu1 rc=0 ok=True runs/pareto/F_Q5_f0.03
+LAUNCH gpu1 runs/pareto/F_Q5_f0.12
+FINISH gpu3 rc=0 ok=True runs/pareto/F_Q5_f0.05
+LAUNCH gpu3 runs/pareto/F_Q5_f0.2
+FINISH gpu2 rc=0 ok=True runs/pareto/F_Q5_f0.08
+FINISH gpu1 rc=0 ok=True runs/pareto/F_Q5_f0.12
+FINISH gpu3 rc=0 ok=True runs/pareto/F_Q5_f0.2
+GRID DONE 35/35 ok

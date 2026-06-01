@@ -1,0 +1,10 @@
+=== wait for R110 backbone ===
+R110 backbone done: {"best_acc": 73.25, "arch": "resnet110", "dataset": "cifar100"}
+=== taxonomy (g0) + cache R20 (g1) ===
+=== cache R110 acts (g0) ===
+=== R20/C10 recon grid (gpus 0,1) ===
+=== multi-seed grid (gpus 0,1) ===
+=== ResNet-110 recon (Field@5%, 5 sections, gpus 0,1) ===
+=== ViT-SAE on Imagenette (g0) ===
+VIT step failed (non-fatal)
+TIER_REST DONE

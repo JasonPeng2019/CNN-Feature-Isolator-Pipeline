@@ -1,0 +1,62 @@
+30 jobs on gpus [0, 1, 2, 3]
+LAUNCH gpu0 runs/phase2/E1_Q1_f0.02
+LAUNCH gpu1 runs/phase2/E1_Q1_f0.05
+LAUNCH gpu2 runs/phase2/E2_Q1_k2
+LAUNCH gpu3 runs/phase2/E2_Q1_k4
+FINISH gpu1 rc=0 ok=True runs/phase2/E1_Q1_f0.05
+LAUNCH gpu1 runs/phase2/E4_Q1_k2
+FINISH gpu2 rc=0 ok=True runs/phase2/E2_Q1_k2
+LAUNCH gpu2 runs/phase2/E4_Q1_k4
+FINISH gpu0 rc=0 ok=True runs/phase2/E1_Q1_f0.02
+LAUNCH gpu0 runs/phase2/E1_Q2_f0.02
+FINISH gpu3 rc=0 ok=True runs/phase2/E2_Q1_k4
+LAUNCH gpu3 runs/phase2/E1_Q2_f0.05
+FINISH gpu1 rc=0 ok=True runs/phase2/E4_Q1_k2
+LAUNCH gpu1 runs/phase2/E2_Q2_k2
+FINISH gpu2 rc=0 ok=True runs/phase2/E4_Q1_k4
+LAUNCH gpu2 runs/phase2/E2_Q2_k4
+FINISH gpu0 rc=0 ok=True runs/phase2/E1_Q2_f0.02
+LAUNCH gpu0 runs/phase2/E4_Q2_k2
+FINISH gpu3 rc=0 ok=True runs/phase2/E1_Q2_f0.05
+LAUNCH gpu3 runs/phase2/E4_Q2_k4
+FINISH gpu1 rc=0 ok=True runs/phase2/E2_Q2_k2
+LAUNCH gpu1 runs/phase2/E1_Q3_f0.02
+FINISH gpu2 rc=0 ok=True runs/phase2/E2_Q2_k4
+LAUNCH gpu2 runs/phase2/E1_Q3_f0.05
+FINISH gpu0 rc=0 ok=True runs/phase2/E4_Q2_k2
+LAUNCH gpu0 runs/phase2/E2_Q3_k2
+FINISH gpu3 rc=0 ok=True runs/phase2/E4_Q2_k4
+LAUNCH gpu3 runs/phase2/E2_Q3_k4
+FINISH gpu1 rc=0 ok=True runs/phase2/E1_Q3_f0.02
+LAUNCH gpu1 runs/phase2/E4_Q3_k2
+FINISH gpu2 rc=0 ok=True runs/phase2/E1_Q3_f0.05
+LAUNCH gpu2 runs/phase2/E4_Q3_k4
+FINISH gpu0 rc=0 ok=True runs/phase2/E2_Q3_k2
+LAUNCH gpu0 runs/phase2/E1_Q4_f0.02
+FINISH gpu1 rc=0 ok=True runs/phase2/E4_Q3_k2
+LAUNCH gpu1 runs/phase2/E1_Q4_f0.05
+FINISH gpu2 rc=0 ok=True runs/phase2/E4_Q3_k4
+LAUNCH gpu2 runs/phase2/E2_Q4_k2
+FINISH gpu3 rc=0 ok=True runs/phase2/E2_Q3_k4
+LAUNCH gpu3 runs/phase2/E2_Q4_k4
+FINISH gpu1 rc=0 ok=True runs/phase2/E1_Q4_f0.05
+LAUNCH gpu1 runs/phase2/E4_Q4_k2
+FINISH gpu0 rc=0 ok=True runs/phase2/E1_Q4_f0.02
+LAUNCH gpu0 runs/phase2/E4_Q4_k4
+FINISH gpu2 rc=0 ok=True runs/phase2/E2_Q4_k2
+LAUNCH gpu2 runs/phase2/E1_Q5_f0.02
+FINISH gpu1 rc=0 ok=True runs/phase2/E4_Q4_k2
+LAUNCH gpu1 runs/phase2/E1_Q5_f0.05
+FINISH gpu0 rc=0 ok=True runs/phase2/E4_Q4_k4
+LAUNCH gpu0 runs/phase2/E2_Q5_k2
+FINISH gpu3 rc=0 ok=True runs/phase2/E2_Q4_k4
+LAUNCH gpu3 runs/phase2/E2_Q5_k4
+FINISH gpu2 rc=0 ok=True runs/phase2/E1_Q5_f0.02
+LAUNCH gpu2 runs/phase2/E4_Q5_k2
+FINISH gpu1 rc=0 ok=True runs/phase2/E1_Q5_f0.05
+LAUNCH gpu1 runs/phase2/E4_Q5_k4
+FINISH gpu0 rc=0 ok=True runs/phase2/E2_Q5_k2
+FINISH gpu2 rc=0 ok=True runs/phase2/E4_Q5_k2
+FINISH gpu1 rc=0 ok=True runs/phase2/E4_Q5_k4
+FINISH gpu3 rc=0 ok=True runs/phase2/E2_Q5_k4
+GRID DONE 30/30 ok
