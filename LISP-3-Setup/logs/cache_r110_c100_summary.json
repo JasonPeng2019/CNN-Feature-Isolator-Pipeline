@@ -1,7 +1,7 @@
 {
   "name": "cache_r110_c100",
-  "start": "2026-06-01T07:23:57Z",
-  "end": "2026-06-01T07:23:57Z",
+  "start": "2026-06-01T08:21:12Z",
+  "end": "2026-06-01T08:22:29Z",
   "rc": 0,
   "command": "python 'src/cache_activations.py' --ckpt 'runs/backbone_r110_c100/best.pt' --dataset cifar100 --out 'runs/acts_r110_c100' --device cuda:1"
 }

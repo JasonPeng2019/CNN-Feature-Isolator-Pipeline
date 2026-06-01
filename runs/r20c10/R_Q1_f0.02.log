@@ -1,19 +1,41 @@
-Traceback (most recent call last):
-  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/train_sae.py", line 141, in <module>
-    main()
-    ~~~~^^
-  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/train_sae.py", line 77, in main
-    tr = torch.utils.data.DataLoader(Acts(args.acts, "train", args.section), batch_size=args.bs, shuffle=True, num_workers=2, pin_memory=True)
-                                     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/train_sae.py", line 18, in __init__
-    self.H = torch.load(os.path.join(acts_dir, f"{split}_{section}.pt"))  # fp16 (N,C,H,W)
-             ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/serialization.py", line 1500, in load
-    with _open_file_like(f, "rb") as opened_file:
-         ~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/serialization.py", line 768, in _open_file_like
-    return _open_file(name_or_buffer, mode)
-  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/serialization.py", line 749, in __init__
-    super().__init__(open(name, mode))  # noqa: SIM115
-                     ~~~~^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: 'runs/acts_r20_c10/train_Q1.pt'
+[Q1 field global] ep0 loss0.140 relL2 0.151 cos 0.990 top1 0.922 KL 0.013 frac 1.0000
+[Q1 field global] ep1 loss0.017 relL2 0.106 cos 0.995 top1 0.923 KL 0.006 frac 1.0000
+[Q1 field global] ep2 loss0.010 relL2 0.090 cos 0.996 top1 0.923 KL 0.005 frac 1.0000
+[Q1 field global] ep3 loss0.008 relL2 0.081 cos 0.997 top1 0.924 KL 0.004 frac 1.0000
+[Q1 field global] ep4 loss0.006 relL2 0.082 cos 0.998 top1 0.922 KL 0.003 frac 1.0000
+[Q1 field global] ep5 loss0.005 relL2 0.061 cos 0.998 top1 0.923 KL 0.002 frac 1.0000
+[Q1 field global] ep6 loss0.004 relL2 0.064 cos 0.998 top1 0.923 KL 0.002 frac 1.0000
+[Q1 field global] ep7 loss0.004 relL2 0.054 cos 0.999 top1 0.923 KL 0.002 frac 1.0000
+[Q1 field global] ep8 loss0.003 relL2 0.055 cos 0.999 top1 0.923 KL 0.002 frac 1.0000
+[Q1 field global] ep9 loss0.003 relL2 0.052 cos 0.999 top1 0.923 KL 0.002 frac 1.0000
+[Q1 field global] ep10 loss0.006 relL2 0.059 cos 0.998 top1 0.923 KL 0.002 frac 0.4981
+[Q1 field global] ep11 loss0.004 relL2 0.053 cos 0.999 top1 0.922 KL 0.002 frac 0.4738
+[Q1 field global] ep12 loss0.003 relL2 0.053 cos 0.999 top1 0.922 KL 0.002 frac 0.4504
+[Q1 field global] ep13 loss0.003 relL2 0.049 cos 0.999 top1 0.923 KL 0.001 frac 0.4267
+[Q1 field global] ep14 loss0.003 relL2 0.049 cos 0.999 top1 0.923 KL 0.001 frac 0.4033
+[Q1 field global] ep15 loss0.002 relL2 0.048 cos 0.999 top1 0.923 KL 0.001 frac 0.3795
+[Q1 field global] ep16 loss0.003 relL2 0.050 cos 0.999 top1 0.922 KL 0.001 frac 0.3558
+[Q1 field global] ep17 loss0.002 relL2 0.042 cos 0.999 top1 0.922 KL 0.001 frac 0.3318
+[Q1 field global] ep18 loss0.003 relL2 0.044 cos 0.999 top1 0.922 KL 0.001 frac 0.3079
+[Q1 field global] ep19 loss0.002 relL2 0.044 cos 0.999 top1 0.923 KL 0.001 frac 0.2840
+[Q1 field global] ep20 loss0.002 relL2 0.046 cos 0.999 top1 0.922 KL 0.001 frac 0.2600
+[Q1 field global] ep21 loss0.002 relL2 0.040 cos 0.999 top1 0.922 KL 0.001 frac 0.2360
+[Q1 field global] ep22 loss0.002 relL2 0.058 cos 0.998 top1 0.922 KL 0.002 frac 0.2119
+[Q1 field global] ep23 loss0.002 relL2 0.046 cos 0.999 top1 0.922 KL 0.001 frac 0.1880
+[Q1 field global] ep24 loss0.003 relL2 0.040 cos 0.999 top1 0.922 KL 0.001 frac 0.1640
+[Q1 field global] ep25 loss0.003 relL2 0.045 cos 0.999 top1 0.923 KL 0.001 frac 0.1400
+[Q1 field global] ep26 loss0.004 relL2 0.049 cos 0.999 top1 0.922 KL 0.001 frac 0.1160
+[Q1 field global] ep27 loss0.005 relL2 0.060 cos 0.998 top1 0.923 KL 0.002 frac 0.0920
+[Q1 field global] ep28 loss0.008 relL2 0.088 cos 0.997 top1 0.923 KL 0.005 frac 0.0680
+[Q1 field global] ep29 loss0.013 relL2 0.091 cos 0.996 top1 0.921 KL 0.006 frac 0.0440
+[Q1 field global] ep30 loss0.032 relL2 0.118 cos 0.993 top1 0.921 KL 0.012 frac 0.0200
+[Q1 field global] ep31 loss0.012 relL2 0.101 cos 0.995 top1 0.923 KL 0.008 frac 0.0200
+[Q1 field global] ep32 loss0.010 relL2 0.088 cos 0.996 top1 0.922 KL 0.007 frac 0.0200
+[Q1 field global] ep33 loss0.008 relL2 0.086 cos 0.997 top1 0.922 KL 0.006 frac 0.0200
+[Q1 field global] ep34 loss0.007 relL2 0.079 cos 0.997 top1 0.922 KL 0.005 frac 0.0200
+[Q1 field global] ep35 loss0.007 relL2 0.076 cos 0.997 top1 0.922 KL 0.005 frac 0.0200
+[Q1 field global] ep36 loss0.006 relL2 0.078 cos 0.997 top1 0.922 KL 0.005 frac 0.0200
+[Q1 field global] ep37 loss0.006 relL2 0.070 cos 0.998 top1 0.922 KL 0.004 frac 0.0200
+[Q1 field global] ep38 loss0.005 relL2 0.072 cos 0.998 top1 0.922 KL 0.004 frac 0.0200
+[Q1 field global] ep39 loss0.005 relL2 0.063 cos 0.998 top1 0.922 KL 0.004 frac 0.0200
+SAE DONE runs/r20c10/R_Q1_f0.02/result.json

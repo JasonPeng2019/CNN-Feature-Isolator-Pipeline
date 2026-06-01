@@ -1,19 +1,18 @@
-Traceback (most recent call last):
-  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/train_sae.py", line 141, in <module>
-    main()
-    ~~~~^^
-  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/train_sae.py", line 77, in main
-    tr = torch.utils.data.DataLoader(Acts(args.acts, "train", args.section), batch_size=args.bs, shuffle=True, num_workers=2, pin_memory=True)
-                                     ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/train_sae.py", line 18, in __init__
-    self.H = torch.load(os.path.join(acts_dir, f"{split}_{section}.pt"))  # fp16 (N,C,H,W)
-             ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/serialization.py", line 1500, in load
-    with _open_file_like(f, "rb") as opened_file:
-         ~~~~~~~~~~~~~~~^^^^^^^^^
-  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/serialization.py", line 768, in _open_file_like
-    return _open_file(name_or_buffer, mode)
-  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/serialization.py", line 749, in __init__
-    super().__init__(open(name, mode))  # noqa: SIM115
-                     ~~~~^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: 'runs/acts_r20_c10/train_Q3.pt'
+[Q3 field global] ep0 loss0.233 relL2 0.203 cos 0.981 top1 0.920 KL 0.015 frac 1.0000
+[Q3 field global] ep1 loss0.028 relL2 0.123 cos 0.994 top1 0.918 KL 0.013 frac 1.0000
+[Q3 field global] ep2 loss0.014 relL2 0.098 cos 0.997 top1 0.922 KL 0.008 frac 1.0000
+[Q3 field global] ep3 loss0.010 relL2 0.083 cos 0.997 top1 0.922 KL 0.005 frac 1.0000
+[Q3 field global] ep4 loss0.008 relL2 0.140 cos 0.991 top1 0.911 KL 0.043 frac 1.0000
+[Q3 field global] ep5 loss0.007 relL2 0.080 cos 0.997 top1 0.922 KL 0.006 frac 1.0000
+[Q3 field global] ep6 loss0.007 relL2 0.075 cos 0.998 top1 0.922 KL 0.008 frac 1.0000
+[Q3 field global] ep7 loss0.006 relL2 0.090 cos 0.996 top1 0.922 KL 0.014 frac 1.0000
+[Q3 field global] ep8 loss0.005 relL2 0.067 cos 0.998 top1 0.921 KL 0.003 frac 1.0000
+[Q3 field global] ep9 loss0.005 relL2 0.064 cos 0.999 top1 0.923 KL 0.003 frac 1.0000
+[Q3 field global] ep10 loss0.019 relL2 0.085 cos 0.997 top1 0.922 KL 0.005 frac 0.5000
+[Q3 field global] ep11 loss0.008 relL2 0.073 cos 0.998 top1 0.922 KL 0.005 frac 0.4775
+[Q3 field global] ep12 loss0.005 relL2 0.089 cos 0.997 top1 0.920 KL 0.008 frac 0.4550
+[Q3 field global] ep13 loss0.005 relL2 0.069 cos 0.998 top1 0.921 KL 0.004 frac 0.4325
+[Q3 field global] ep14 loss0.005 relL2 0.061 cos 0.998 top1 0.923 KL 0.003 frac 0.4100
+[Q3 field global] ep15 loss0.005 relL2 0.060 cos 0.999 top1 0.921 KL 0.002 frac 0.3875
+[Q3 field global] ep16 loss0.005 relL2 0.071 cos 0.998 top1 0.922 KL 0.004 frac 0.3650
+[Q3 field global] ep17 loss0.005 relL2 0.066 cos 0.998 top1 0.922 KL 0.003 frac 0.3425

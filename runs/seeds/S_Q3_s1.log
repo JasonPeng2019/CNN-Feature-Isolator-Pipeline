@@ -1,14 +1,18 @@
-Traceback (most recent call last):
-  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/train_sae.py", line 141, in <module>
-    main()
-    ~~~~^^
-  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/train_sae.py", line 79, in main
-    mean, std = load_norm(args.acts, args.section, dev)
-                ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/train_sae.py", line 30, in load_norm
-    mean = torch.tensor(st["mean"], device=device).view(1, -1, 1, 1)
-           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/cuda/__init__.py", line 424, in _lazy_init
-    torch._C._cuda_init()
-    ~~~~~~~~~~~~~~~~~~~^^
-RuntimeError: CUDA unknown error - this may be due to an incorrectly set up environment, e.g. changing env variable CUDA_VISIBLE_DEVICES after program start. Setting the available devices to be zero.
+[Q3 field global] ep0 loss0.232 relL2 0.212 cos 0.979 top1 0.710 KL 0.080 frac 1.0000
+[Q3 field global] ep1 loss0.029 relL2 0.124 cos 0.993 top1 0.716 KL 0.035 frac 1.0000
+[Q3 field global] ep2 loss0.014 relL2 0.094 cos 0.996 top1 0.715 KL 0.019 frac 1.0000
+[Q3 field global] ep3 loss0.010 relL2 0.099 cos 0.995 top1 0.716 KL 0.043 frac 1.0000
+[Q3 field global] ep4 loss0.007 relL2 0.070 cos 0.998 top1 0.715 KL 0.013 frac 1.0000
+[Q3 field global] ep5 loss0.007 relL2 0.075 cos 0.998 top1 0.716 KL 0.023 frac 1.0000
+[Q3 field global] ep6 loss0.006 relL2 0.062 cos 0.998 top1 0.716 KL 0.012 frac 1.0000
+[Q3 field global] ep7 loss0.006 relL2 0.071 cos 0.998 top1 0.713 KL 0.018 frac 1.0000
+[Q3 field global] ep8 loss0.005 relL2 0.093 cos 0.996 top1 0.714 KL 0.061 frac 1.0000
+[Q3 field global] ep9 loss0.005 relL2 0.052 cos 0.999 top1 0.717 KL 0.009 frac 1.0000
+[Q3 field global] ep10 loss0.023 relL2 0.082 cos 0.997 top1 0.714 KL 0.018 frac 0.5000
+[Q3 field global] ep11 loss0.008 relL2 0.067 cos 0.998 top1 0.716 KL 0.012 frac 0.4775
+[Q3 field global] ep12 loss0.005 relL2 0.067 cos 0.998 top1 0.716 KL 0.017 frac 0.4550
+[Q3 field global] ep13 loss0.005 relL2 0.058 cos 0.999 top1 0.716 KL 0.009 frac 0.4325
+[Q3 field global] ep14 loss0.005 relL2 0.067 cos 0.998 top1 0.716 KL 0.022 frac 0.4100
+[Q3 field global] ep15 loss0.005 relL2 0.057 cos 0.999 top1 0.715 KL 0.010 frac 0.3875
+[Q3 field global] ep16 loss0.005 relL2 0.061 cos 0.998 top1 0.715 KL 0.015 frac 0.3650
+[Q3 field global] ep17 loss0.005 relL2 0.077 cos 0.997 top1 0.715 KL 0.035 frac 0.3425

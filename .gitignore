@@ -1,0 +1,15 @@
+# Large computed artifacts
+runs/
+data/
+*.pt
+
+# Caches
+.cache/
+.pip-cache/
+.pydeps/
+__pycache__/
+*.pyc
+
+# Logs
+logs/
+*.log

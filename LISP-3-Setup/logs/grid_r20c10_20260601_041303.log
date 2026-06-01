@@ -1,3 +1,15 @@
 15 jobs on gpus [0, 1]
 LAUNCH gpu0 runs/r20c10/R_Q1_f0.02
 LAUNCH gpu1 runs/r20c10/R_Q1_f0.05
+FINISH gpu0 rc=0 ok=True runs/r20c10/R_Q1_f0.02
+LAUNCH gpu0 runs/r20c10/R_Q1_f0.1
+FINISH gpu1 rc=0 ok=True runs/r20c10/R_Q1_f0.05
+LAUNCH gpu1 runs/r20c10/R_Q2_f0.02
+FINISH gpu0 rc=0 ok=True runs/r20c10/R_Q1_f0.1
+LAUNCH gpu0 runs/r20c10/R_Q2_f0.05
+FINISH gpu1 rc=0 ok=True runs/r20c10/R_Q2_f0.02
+LAUNCH gpu1 runs/r20c10/R_Q2_f0.1
+FINISH gpu0 rc=0 ok=True runs/r20c10/R_Q2_f0.05
+LAUNCH gpu0 runs/r20c10/R_Q3_f0.02
+FINISH gpu1 rc=0 ok=True runs/r20c10/R_Q2_f0.1
+LAUNCH gpu1 runs/r20c10/R_Q3_f0.05
