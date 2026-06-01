@@ -1,0 +1,7 @@
+{
+  "name": "r110_Q4",
+  "start": "2026-06-01T07:23:58Z",
+  "end": "2026-06-01T07:23:58Z",
+  "rc": 0,
+  "command": "python 'src/train_sae.py' --section 'Q4' --sae_type field --mask global --target_frac 0.05 --Kmult 8 --n_blocks 3 --epochs 40 --acts 'runs/acts_r110_c100' --ckpt 'runs/backbone_r110_c100/best.pt' --dataset cifar100 --device cuda:1 --out 'runs/r110/F_Q4'"
+}

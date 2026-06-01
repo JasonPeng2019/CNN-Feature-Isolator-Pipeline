@@ -1,0 +1,7 @@
+{
+  "name": "cache_r20_c10",
+  "start": "2026-06-01T07:23:57Z",
+  "end": "2026-06-01T07:23:57Z",
+  "rc": 0,
+  "command": "python 'src/cache_activations.py' --ckpt 'runs/backbone_r20_c10/best.pt' --dataset cifar10 --out 'runs/acts_r20_c10' --device cuda:0"
+}
