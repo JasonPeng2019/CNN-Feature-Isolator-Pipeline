@@ -18,3 +18,24 @@
 [Q3 field global] ep17 loss0.005 relL2 0.067 cos 0.998 top1 0.716 KL 0.022 frac 0.3425
 [Q3 field global] ep18 loss0.005 relL2 0.058 cos 0.998 top1 0.718 KL 0.009 frac 0.3200
 [Q3 field global] ep19 loss0.005 relL2 0.061 cos 0.998 top1 0.716 KL 0.009 frac 0.2975
+[Q3 field global] ep20 loss0.006 relL2 0.066 cos 0.998 top1 0.716 KL 0.015 frac 0.2750
+[Q3 field global] ep21 loss0.006 relL2 0.069 cos 0.998 top1 0.714 KL 0.024 frac 0.2525
+[Q3 field global] ep22 loss0.007 relL2 0.058 cos 0.998 top1 0.718 KL 0.007 frac 0.2300
+[Q3 field global] ep23 loss0.007 relL2 0.075 cos 0.997 top1 0.718 KL 0.020 frac 0.2075
+[Q3 field global] ep24 loss0.008 relL2 0.111 cos 0.994 top1 0.712 KL 0.062 frac 0.1850
+[Q3 field global] ep25 loss0.009 relL2 0.072 cos 0.998 top1 0.716 KL 0.013 frac 0.1625
+[Q3 field global] ep26 loss0.013 relL2 0.088 cos 0.996 top1 0.717 KL 0.016 frac 0.1400
+[Q3 field global] ep27 loss0.019 relL2 0.115 cos 0.994 top1 0.713 KL 0.027 frac 0.1175
+[Q3 field global] ep28 loss0.030 relL2 0.145 cos 0.990 top1 0.713 KL 0.032 frac 0.0950
+[Q3 field global] ep29 loss0.045 relL2 0.191 cos 0.982 top1 0.712 KL 0.056 frac 0.0725
+[Q3 field global] ep30 loss0.066 relL2 0.229 cos 0.973 top1 0.714 KL 0.065 frac 0.0500
+[Q3 field global] ep31 loss0.050 relL2 0.209 cos 0.978 top1 0.711 KL 0.050 frac 0.0500
+[Q3 field global] ep32 loss0.044 relL2 0.203 cos 0.979 top1 0.711 KL 0.062 frac 0.0500
+[Q3 field global] ep33 loss0.041 relL2 0.200 cos 0.980 top1 0.710 KL 0.067 frac 0.0500
+[Q3 field global] ep34 loss0.039 relL2 0.193 cos 0.981 top1 0.712 KL 0.049 frac 0.0500
+[Q3 field global] ep35 loss0.038 relL2 0.188 cos 0.982 top1 0.714 KL 0.042 frac 0.0500
+[Q3 field global] ep36 loss0.036 relL2 0.185 cos 0.983 top1 0.715 KL 0.040 frac 0.0500
+[Q3 field global] ep37 loss0.036 relL2 0.186 cos 0.982 top1 0.712 KL 0.044 frac 0.0500
+[Q3 field global] ep38 loss0.035 relL2 0.184 cos 0.983 top1 0.716 KL 0.043 frac 0.0500
+[Q3 field global] ep39 loss0.034 relL2 0.184 cos 0.983 top1 0.711 KL 0.052 frac 0.0500
+SAE DONE runs/seeds/S_Q3_s0/result.json

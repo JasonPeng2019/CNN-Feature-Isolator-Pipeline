@@ -20,3 +20,22 @@
 [Q3 field global] ep19 loss0.006 relL2 0.061 cos 0.998 top1 0.923 KL 0.002 frac 0.2840
 [Q3 field global] ep20 loss0.006 relL2 0.070 cos 0.998 top1 0.922 KL 0.003 frac 0.2600
 [Q3 field global] ep21 loss0.007 relL2 0.107 cos 0.995 top1 0.917 KL 0.021 frac 0.2360
+[Q3 field global] ep22 loss0.007 relL2 0.063 cos 0.998 top1 0.923 KL 0.003 frac 0.2120
+[Q3 field global] ep23 loss0.007 relL2 0.061 cos 0.998 top1 0.922 KL 0.002 frac 0.1880
+[Q3 field global] ep24 loss0.009 relL2 0.071 cos 0.998 top1 0.923 KL 0.003 frac 0.1640
+[Q3 field global] ep25 loss0.011 relL2 0.084 cos 0.997 top1 0.923 KL 0.003 frac 0.1400
+[Q3 field global] ep26 loss0.017 relL2 0.097 cos 0.996 top1 0.923 KL 0.003 frac 0.1160
+[Q3 field global] ep27 loss0.024 relL2 0.126 cos 0.992 top1 0.923 KL 0.005 frac 0.0920
+[Q3 field global] ep28 loss0.037 relL2 0.153 cos 0.988 top1 0.923 KL 0.006 frac 0.0680
+[Q3 field global] ep29 loss0.058 relL2 0.218 cos 0.976 top1 0.920 KL 0.023 frac 0.0440
+[Q3 field global] ep30 loss0.133 relL2 0.333 cos 0.943 top1 0.915 KL 0.039 frac 0.0200
+[Q3 field global] ep31 loss0.110 relL2 0.315 cos 0.949 top1 0.918 KL 0.035 frac 0.0200
+[Q3 field global] ep32 loss0.102 relL2 0.306 cos 0.952 top1 0.917 KL 0.032 frac 0.0200
+[Q3 field global] ep33 loss0.096 relL2 0.300 cos 0.954 top1 0.918 KL 0.030 frac 0.0200
+[Q3 field global] ep34 loss0.093 relL2 0.295 cos 0.955 top1 0.918 KL 0.030 frac 0.0200
+[Q3 field global] ep35 loss0.091 relL2 0.292 cos 0.956 top1 0.919 KL 0.030 frac 0.0200
+[Q3 field global] ep36 loss0.089 relL2 0.290 cos 0.957 top1 0.917 KL 0.026 frac 0.0200
+[Q3 field global] ep37 loss0.087 relL2 0.286 cos 0.958 top1 0.919 KL 0.025 frac 0.0200
+[Q3 field global] ep38 loss0.086 relL2 0.285 cos 0.958 top1 0.919 KL 0.028 frac 0.0200
+[Q3 field global] ep39 loss0.084 relL2 0.281 cos 0.960 top1 0.920 KL 0.023 frac 0.0200
+SAE DONE runs/r20c10/R_Q3_f0.02/result.json

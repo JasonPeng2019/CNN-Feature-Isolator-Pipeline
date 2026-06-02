@@ -1,7 +1,7 @@
 {
   "name": "grid_seeds",
-  "start": "2026-06-01T08:07:02Z",
-  "end": "2026-06-01T08:07:03Z",
+  "start": "2026-06-01T08:13:03Z",
+  "end": "2026-06-01T09:43:54Z",
   "rc": 0,
   "command": "python 'scripts/run_grid.py' --phase 'seeds' --out_root 'runs/seeds' --gpus '0,1'"
 }

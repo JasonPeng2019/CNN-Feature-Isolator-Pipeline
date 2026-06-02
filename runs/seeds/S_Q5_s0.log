@@ -1,14 +1,41 @@
-Traceback (most recent call last):
-  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/train_sae.py", line 141, in <module>
-    main()
-    ~~~~^^
-  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/train_sae.py", line 79, in main
-    mean, std = load_norm(args.acts, args.section, dev)
-                ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/goutham/Carlos,GouthamandYash/HIGH_DIM_PROJ/src/train_sae.py", line 30, in load_norm
-    mean = torch.tensor(st["mean"], device=device).view(1, -1, 1, 1)
-           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/goutham/miniconda3/lib/python3.13/site-packages/torch/cuda/__init__.py", line 424, in _lazy_init
-    torch._C._cuda_init()
-    ~~~~~~~~~~~~~~~~~~~^^
-RuntimeError: CUDA unknown error - this may be due to an incorrectly set up environment, e.g. changing env variable CUDA_VISIBLE_DEVICES after program start. Setting the available devices to be zero.
+[Q5 field global] ep0 loss0.238 relL2 0.207 cos 0.981 top1 0.712 KL 0.027 frac 1.0000
+[Q5 field global] ep1 loss0.031 relL2 0.141 cos 0.993 top1 0.716 KL 0.012 frac 1.0000
+[Q5 field global] ep2 loss0.017 relL2 0.125 cos 0.995 top1 0.716 KL 0.011 frac 1.0000
+[Q5 field global] ep3 loss0.015 relL2 0.136 cos 0.994 top1 0.714 KL 0.012 frac 1.0000
+[Q5 field global] ep4 loss0.014 relL2 0.116 cos 0.996 top1 0.714 KL 0.009 frac 1.0000
+[Q5 field global] ep5 loss0.013 relL2 0.112 cos 0.996 top1 0.716 KL 0.008 frac 1.0000
+[Q5 field global] ep6 loss0.012 relL2 0.112 cos 0.996 top1 0.716 KL 0.008 frac 1.0000
+[Q5 field global] ep7 loss0.011 relL2 0.106 cos 0.997 top1 0.716 KL 0.007 frac 1.0000
+[Q5 field global] ep8 loss0.011 relL2 0.111 cos 0.997 top1 0.716 KL 0.008 frac 1.0000
+[Q5 field global] ep9 loss0.010 relL2 0.102 cos 0.997 top1 0.717 KL 0.008 frac 1.0000
+[Q5 field global] ep10 loss0.030 relL2 0.145 cos 0.992 top1 0.718 KL 0.019 frac 0.4998
+[Q5 field global] ep11 loss0.015 relL2 0.123 cos 0.995 top1 0.715 KL 0.010 frac 0.4775
+[Q5 field global] ep12 loss0.013 relL2 0.111 cos 0.996 top1 0.717 KL 0.008 frac 0.4547
+[Q5 field global] ep13 loss0.012 relL2 0.108 cos 0.996 top1 0.715 KL 0.006 frac 0.4320
+[Q5 field global] ep14 loss0.011 relL2 0.106 cos 0.996 top1 0.717 KL 0.007 frac 0.4094
+[Q5 field global] ep15 loss0.011 relL2 0.105 cos 0.996 top1 0.716 KL 0.007 frac 0.3870
+[Q5 field global] ep16 loss0.010 relL2 0.103 cos 0.996 top1 0.716 KL 0.007 frac 0.3644
+[Q5 field global] ep17 loss0.010 relL2 0.103 cos 0.996 top1 0.716 KL 0.007 frac 0.3422
+[Q5 field global] ep18 loss0.010 relL2 0.099 cos 0.997 top1 0.718 KL 0.005 frac 0.3198
+[Q5 field global] ep19 loss0.010 relL2 0.106 cos 0.996 top1 0.716 KL 0.006 frac 0.2974
+[Q5 field global] ep20 loss0.010 relL2 0.099 cos 0.997 top1 0.716 KL 0.005 frac 0.2749
+[Q5 field global] ep21 loss0.010 relL2 0.101 cos 0.996 top1 0.716 KL 0.007 frac 0.2525
+[Q5 field global] ep22 loss0.010 relL2 0.099 cos 0.996 top1 0.716 KL 0.005 frac 0.2300
+[Q5 field global] ep23 loss0.010 relL2 0.097 cos 0.997 top1 0.719 KL 0.004 frac 0.2075
+[Q5 field global] ep24 loss0.011 relL2 0.104 cos 0.996 top1 0.716 KL 0.004 frac 0.1850
+[Q5 field global] ep25 loss0.013 relL2 0.104 cos 0.996 top1 0.718 KL 0.004 frac 0.1625
+[Q5 field global] ep26 loss0.014 relL2 0.109 cos 0.995 top1 0.717 KL 0.005 frac 0.1400
+[Q5 field global] ep27 loss0.016 relL2 0.124 cos 0.994 top1 0.717 KL 0.007 frac 0.1175
+[Q5 field global] ep28 loss0.019 relL2 0.124 cos 0.993 top1 0.715 KL 0.006 frac 0.0950
+[Q5 field global] ep29 loss0.023 relL2 0.136 cos 0.992 top1 0.717 KL 0.007 frac 0.0725
+[Q5 field global] ep30 loss0.032 relL2 0.158 cos 0.988 top1 0.715 KL 0.010 frac 0.0500
+[Q5 field global] ep31 loss0.022 relL2 0.141 cos 0.991 top1 0.717 KL 0.010 frac 0.0500
+[Q5 field global] ep32 loss0.017 relL2 0.127 cos 0.993 top1 0.716 KL 0.006 frac 0.0500
+[Q5 field global] ep33 loss0.015 relL2 0.120 cos 0.994 top1 0.718 KL 0.005 frac 0.0500
+[Q5 field global] ep34 loss0.013 relL2 0.119 cos 0.994 top1 0.716 KL 0.005 frac 0.0500
+[Q5 field global] ep35 loss0.013 relL2 0.114 cos 0.994 top1 0.716 KL 0.005 frac 0.0500
+[Q5 field global] ep36 loss0.012 relL2 0.115 cos 0.994 top1 0.717 KL 0.005 frac 0.0500
+[Q5 field global] ep37 loss0.012 relL2 0.119 cos 0.994 top1 0.718 KL 0.005 frac 0.0500
+[Q5 field global] ep38 loss0.012 relL2 0.114 cos 0.994 top1 0.717 KL 0.004 frac 0.0500
+[Q5 field global] ep39 loss0.012 relL2 0.109 cos 0.995 top1 0.717 KL 0.004 frac 0.0500
+SAE DONE runs/seeds/S_Q5_s0/result.json

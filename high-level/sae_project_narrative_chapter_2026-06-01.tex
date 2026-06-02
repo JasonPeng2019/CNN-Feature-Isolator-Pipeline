@@ -110,6 +110,19 @@ Feature audits in \texttt{runs/audit/audit\_Q3.json} and \texttt{runs/audit/audi
 
 Together, these diagnostics supported the mechanistic pivot rather than contradicting it.
 
+\subsection{Phase 4 Cluster Reruns: Scale, Robustness, and Transfer After the Blocked Node}
+The later cluster reruns matter because they answer a different class of question than Phases 1--3b. The earlier phases established the core mechanism on the main backbone. The reruns ask whether that mechanism generalizes sensibly when one changes dataset/backbone scale, repeats the winner under multiple seeds, or moves to adjacent transfer settings.
+
+The R20/C10 grid is best read as a scale-down and dataset-shift stress test of the winner recipe. It reruns Field+Global-style sparse reconstruction on ResNet-20/CIFAR-10 across Q1--Q5 and fractions 2\%, 5\%, and 10\%. All 15 cells completed. The important pattern is not merely that the jobs finished, but that the deep sections were extremely strong and largely saturated by 5\% retained. Q3, Q4, and Q5 all sat around 0.92 spliced top-1 across the tested fractions. In other words, the sparse-sufficiency story does not look delicately tuned to the ResNet-56/CIFAR-100 anchor.
+
+The seed grid answers a narrower but important criticism: perhaps the winner-path claims depend on one lucky training seed. Here the project reran the 5\%-retained winner configuration across seeds 0, 1, and 2 for every section. All 15 cells completed. The quantitative spread is small, especially in the most relevant later sections. Q3 ranged from 0.7108 to 0.7142, Q4 from 0.7151 to 0.7184, and Q5 from 0.7165 to 0.7174. This does not prove full statistical robustness in a formal sense, but it does materially strengthen confidence that the headline results are not seed accidents.
+
+The taxonomy experiment asks a more conceptual question about what sort of representation best carries the Q4$\rightarrow$Q5 relationship. Sparse mode outperformed dense and cross controls, with 0.7063 spliced top-1 versus 0.6902 and 0.6099. That result is important because it supports a stronger claim than ``sparse codes can reconstruct.'' It suggests that the sparse carrier is itself an especially useful transition representation in this same-shape section pair.
+
+The ResNet-110 reconstruction sweep extends the winner recipe to a deeper backbone. All five sections completed successfully, with spliced top-1 values of 0.7316, 0.7311, 0.7226, 0.7290, and 0.7318 from Q1 to Q5. The familiar Q3 weakness persists, which is scientifically useful. It means the project's hardest section is not an isolated fluke of one backbone, but a recurrent structural difficulty near the same representational regime change.
+
+Finally, the optional ViT transfer run moved from ``implemented but blocked'' to ``executed with a real artifact.'' Its metrics are not yet the centerpiece of the project, but they are nontrivial enough to matter: prediction agreement 0.9440 and KL 0.0427 at 5\% retained. For the narrative, the main significance is that the project's transfer story now includes a concrete output rather than only an aspiration.
+
 \section{Results in Integrated Interpretation}
 A memo-style report can list many metrics. A chapter should articulate what those metrics jointly imply.
 
@@ -139,11 +152,11 @@ This framing is the only one that is both technically accurate and rhetorically 
 \section{Limitations, Blocked Runs, and Pending Work}
 Not all incompleteness in this project reflects scientific indecision. Some of it reflects systems instability documented in run logs.
 
-Tier logs in \texttt{runs/tier\_rest} show repeated CUDA initialization failures that prevented completion of taxonomy, ViT transfer, and downstream dependent stages. Grid summaries in \texttt{runs/r20c10/grid\_summary.json} and \texttt{runs/seeds/grid\_summary.json} show 15 jobs each with zero successful result outputs under affected runs. R110 backbone training completed successfully (73.25\%, \texttt{runs/backbone\_r110\_c100/done.json}), but R110 reconstruction runs later failed when required cached activations were absent after interrupted cache stages.
+Tier logs in \texttt{runs/tier\_rest} do show repeated CUDA initialization and dependency failures that initially prevented completion of taxonomy, ViT transfer, and several downstream extension stages. But those failure logs are only the first half of the story. A later cluster rerun wave completed the same extension set successfully: \texttt{runs/r20c10/grid\_summary.json} now shows 15 successful R20/C10 cells, \texttt{runs/seeds/grid\_summary.json} shows 15 successful seed-grid cells, \texttt{runs/taxonomy/taxonomy\_q4q5.json} is present, \texttt{runs/r110/F\_Q1} through \texttt{runs/r110/F\_Q5} are populated, and \texttt{runs/vit\_sae/vit\_result.json} exists after later dependency resolution. The correct historical statement is therefore not that these experiments never ran. It is that they were genuinely blocked on the first node and later recovered on cluster reruns.
 
 Scientifically, the main limitation is the mismatch between planned and executed Family II breadth. The project has strong winner-path chain stabilization evidence but not the full cross-architecture, cross-mask dependent-protocol comparison originally envisioned in E5--E8.
 
-A second limitation is robustness quantification under seed variation for some late-stage claims, especially where seed grids were blocked by runtime issues. A third limitation is generality beyond the core backbone where planned extensions (taxonomy comparisons and ViT transfer outputs) were implemented in code but blocked in execution on this environment.
+A second limitation is that robustness and generality are now quantified unevenly rather than absent outright. The successful seed grid improved robustness accounting for the winner setup, and the successful taxonomy, ResNet-110, and ViT reruns improved generality accounting beyond the core backbone. Even so, these extensions remain thinner and less replicated than the main ResNet-56 winner-path evidence.
 
 These limitations do not erase the positive findings, but they constrain the scope of defensible claims. The strongest claims are about the verified winner path and verified mechanisms, not about all potential configurations in the original matrix.
 
@@ -201,9 +214,9 @@ The fourth decision point followed early re-grounding improvements. A modest gai
 
 The fifth decision point concerned whether capacity scaling alone could solve hard edges, especially Q3$\\rightarrow$Q4. The stronger predictor run improved but did not eliminate the gap relative to easier edges and hybrid references. This reduced confidence in ``just scale predictor'' as the primary strategy and strengthened confidence in representation-geometry explanations.
 
-The sixth decision point was operational rather than conceptual: tier campaign interruption under node/GPU instability. At this stage, some pending runs were blocked for infrastructure reasons despite implemented scripts and codepaths. The project therefore ended with uneven completeness: deep evidence on selected paths, explicit blocking logs on others.
+The sixth decision point was operational rather than conceptual: tier campaign interruption under node/GPU instability. At first, some pending runs were blocked for infrastructure reasons despite implemented scripts and codepaths. The project then responded by packaging those runs for cluster relaunch, which changed the evidence base. The current tree therefore no longer ends with pure blockage. It ends with uneven completeness of a different kind: deep evidence on selected paths, completed but thinner extension evidence on scale, robustness, and transfer runs, and explicit log history showing both the failures and the later successful reruns.
 
-Viewed end to end, this chronology is not random drift from plan. It is a sequence of evidence-conditioned reallocations: from feasibility to architecture discrimination, from architecture discrimination to causal-transition diagnostics, from diagnostics to mechanistic stabilization, and from mechanism to partially blocked generalization attempts.
+Viewed end to end, this chronology is not random drift from plan. It is a sequence of evidence-conditioned reallocations: from feasibility to architecture discrimination, from architecture discrimination to causal-transition diagnostics, from diagnostics to mechanistic stabilization, and from mechanism to later generalization attempts that were first blocked and then partially recovered on cluster reruns.
 
 This matters for interpreting ``why not full E5--E8 first.'' In a perfect environment with unlimited compute and no runtime interruptions, broad matrix completion before mechanism deepening might have been preferable for symmetry. In this environment, once strong winner and failure signatures appeared, mechanism-deepening offered higher marginal information per run than symmetric completion of weak candidates. That choice generated a stronger causal explanation but a weaker breadth-completeness profile.
 
