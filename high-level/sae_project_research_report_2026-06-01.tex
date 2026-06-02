@@ -71,6 +71,8 @@ Phase 1 established the anchor condition using E3 (Vector, global, independent).
 
 Additional tier experiments were executed for intervention and feature-quality diagnostics. \texttt{runs/intervene\_result.json} and \texttt{runs/audit/audit\_Q3.json}, \texttt{runs/audit/audit\_Q5.json} are present and complete. A later cluster rerun wave then completed the previously blocked extension set: taxonomy (\texttt{runs/taxonomy/taxonomy\_q4q5.json}), ViT transfer (\texttt{runs/vit\_sae/vit\_result.json}), the R20/C10 fraction grid (\texttt{runs/r20c10/grid\_summary.json}), the seed-stability grid (\texttt{runs/seeds/grid\_summary.json}), and the ResNet-110 reconstruction sweep (\texttt{runs/r110/F\_Q1} through \texttt{runs/r110/F\_Q5}). The current artifact record therefore contains both the earlier failed attempts in launcher logs and the later successful reruns that supersede them.
 
+One later changed follow-up also updates the interpretation of Phase 3b. A rollout-aligned raw-carrier retraining run completed successfully in \texttt{runs/phase3b\_raw\_only\_changed/result.json} and showed that raw chaining is not inherently doomed once the predictor is trained directly under its own rollout conditions. This does not overturn the practical value of re-grounding, but it softens the earlier stronger claim that repeated manifold projection was strictly necessary.
+
 \section{Results}
 \subsection{Backbone and Reconstruction Baselines}
 The frozen ResNet-56/CIFAR-100 reference is 71.83\% top-1. This value appears in \texttt{logs/backbone\_r56\_c100\_\_done.json}. Under sparse reconstruction conditions, E1 and E3 comparison at 2\% retained shows that Field+Global is materially stronger than Vector+Global in early sections, while differences narrow in deeper sections.
@@ -126,6 +128,11 @@ Chain rollout in \texttt{runs/phase3/chain\_result.json} separates information s
 \subsection{Phase 3b Family II-style Results}
 Phase3b scheduled-sampling run gives re-grounded chain top-1 of 0.6624 with hybrid 0.7122. Phase3b BPTT variant gives re-grounded chain top-1 of 0.7010 with hybrid still 0.7122. Raw chain remains near chance in both phase3b variants. These outcomes support the interpretation that manifold re-grounding is the key mechanism for stable multi-step sparse-code composition.
 
+\subsection{Phase 3b changed: raw-carrier retraining without re-grounding}
+The changed Phase 3b rerun directly tested whether the previous raw-chain collapse was an unavoidable property of the representation, or whether it partly reflected a rollout mismatch between training and evaluation. In this version, the predictor was trained on raw predicted carriers rather than on a re-grounded carrier path, while keeping scheduled sampling, full-chain BPTT, gradient clipping, and the usual per-step reconstruction/code losses.
+
+This run completed successfully and produced a clear change in behavior. The raw chain started near chance (0.0123 at epoch 0) but climbed to a final 0.6821. Evaluating the same trained model with re-grounding gave 0.6339, while the hybrid path remained strongest at 0.7120. The main conclusion is that direct rollout-aligned retraining recovers most of the raw-chain collapse. Thus, re-grounding remains an effective stabilizer but is no longer the only viable mechanism supported by the artifact record.
+
 \subsection{Causal and Feature-Quality Diagnostics}
 Intervention results show top-vs-random ablation impact ratios above one with large margins on most edges, including approximately 3.29x and 7.5x in reported pairs, with locality concentration above null area baselines. Feature audits report low dead-feature and duplicate rates at Q3 and Q5. These diagnostics support that the sparse representation is structured and nontrivial rather than degenerate.
 
@@ -142,6 +149,11 @@ The ResNet-110 reconstruction sweep extends the winner recipe to a deeper backbo
 
 The optional ViT transfer run also eventually succeeded after earlier dependency failures. Its final artifact reports prediction agreement 0.9440, KL 0.0427, retained fraction 0.0500, relative $\ell_2$ 0.4172, and cosine similarity 0.9085. This is not as mature a transfer story as the CNN path, but it is enough to say that the codepath moved from ``implemented but blocked'' to ``executed with a real artifact and nontrivial fidelity.''
 
+\subsection{Changed RF and patchwise follow-ups}
+The changed follow-up suite also sharpened two supporting interpretations. First, the fair-budget receptive-field rerun completed successfully across all 15 planned cells and reached a best top-1 of about 0.7173, showing that receptive-field locality remains competitive when the retained-code budget is normalized fairly within each RF window. This weakens any earlier claim that locality itself was the main reason RF-style masking lagged.
+
+Second, the patchwise SAE retries clarified the old vector-coder failure mode. The overlapping patchwise sweep completed across all 45 planned cells and showed that the strongest settings were usually the smallest CNN-filter-based patches rather than larger ones, especially in earlier quarters. The depth-aware patch sweep produced only a partial artifact set (25 cells present rather than the full planned sweep), with early evidence favoring the less aggressive schedule that stays near the base filter size. The disjoint-patch experiment does not currently have an output directory in the repo, so it should be treated as not yet executed in the artifact record rather than as a negative result.
+
 \section{Family I vs Family II: Correct Final Interpretation}
 The final interpretation must separate matrix completion from mechanism execution. E1 through E4 were fully executed as planned matrix cells. E5 through E8 were not executed as full matrix cells. At the same time, Family II-style training was executed in modified form on the winner configuration through phase3b and phase3b\_bptt. Therefore, the project did run Family II-style methods, but did not complete planned Family II breadth.
 
@@ -150,14 +162,16 @@ This interpretation avoids two opposite errors. The first error is claiming ``Fa
 \section{Limitations and Pending Work}
 The main scientific limitation is incomplete Family II breadth. The main operational limitation is no longer total blockage of the tier extension set, but uneven maturity across extensions. The cluster reruns converted the previously blocked R20/C10, seed-stability, taxonomy, ResNet-110 reconstruction, and ViT transfer campaigns into completed artifacts. What remains limited is not whether they ran, but how broadly they cover the original experimental matrix and how deeply they were replicated beyond the winner path.
 
-These limitations constrain claim scope. Strong claims are justified for executed winner-path mechanisms, Family I matrix outcomes, and the completed extension runs named above. Broad claims over all planned Family II architecture/mask combinations are still not justified, and the transfer story beyond the CNN winner path is still much thinner than the core reconstruction and chain evidence.
+These limitations constrain claim scope. Strong claims are justified for executed winner-path mechanisms, Family I matrix outcomes, the changed raw-carrier retraining result, and the completed extension runs named above. Broad claims over all planned Family II architecture/mask combinations are still not justified, the changed patchwise follow-up suite is incomplete, and the transfer story beyond the CNN winner path is still much thinner than the core reconstruction and chain evidence.
 
 \section{Conclusion}
 This project established strong evidence that frozen CNN activations are sparse-compressible in a learned transform domain with high downstream fidelity at low retained fractions. It further established that naive learned sparse-code chains are unstable under recursive rollout, while re-grounding and chain-aware training recover most of the gap to a causal upper bound defined by frozen-block hybrid propagation.
 
+The changed Phase 3b rerun makes that conclusion more precise. Transition stabilization can come from explicit manifold projection, from rollout-aligned retraining, or from a combination of both. In the current artifact record, hybrid/re-grounded paths still win operationally, but the raw-chain failure story is no longer absolute.
+
 The implementation record is therefore coherent but not matrix-complete: Family I matrix coverage is complete, Family II-style mechanism coverage is substantial on one winner path, and full Family II matrix breadth remains future work. This is the accurate research-state summary supported by the current artifact set.
 
 \section*{Artifact Trace}
-Primary files for verification are \texttt{high-level/sparse\_signal\_sae\_experiment\_plan\_high\_accuracy\_conv.tex}, \texttt{scripts/run\_grid.py}, \texttt{src/train\_transition.py}, \texttt{src/eval\_chain.py}, \texttt{src/train\_chain.py}, \texttt{runs/phase1}, \texttt{runs/phase2}, \texttt{runs/phase3}, \texttt{runs/phase3b}, \texttt{runs/phase3b\_bptt}, \texttt{runs/intervene\_result.json}, \texttt{runs/audit/audit\_Q3.json}, \texttt{runs/audit/audit\_Q5.json}, \texttt{runs/r20c10/grid\_summary.json}, \texttt{runs/seeds/grid\_summary.json}, \texttt{runs/taxonomy/taxonomy\_q4q5.json}, \texttt{runs/r110}, \texttt{runs/vit\_sae/vit\_result.json}, and \texttt{logs/baselines\_pca.json}.
+Primary files for verification are \texttt{high-level/sparse\_signal\_sae\_experiment\_plan\_high\_accuracy\_conv.tex}, \texttt{scripts/run\_grid.py}, \texttt{src/train\_transition.py}, \texttt{src/eval\_chain.py}, \texttt{src/train\_chain.py}, \texttt{runs/phase1}, \texttt{runs/phase2}, \texttt{runs/phase3}, \texttt{runs/phase3b}, \texttt{runs/phase3b\_bptt}, \texttt{runs/phase3b\_raw\_only\_changed/result.json}, \texttt{runs/phase2\_rf\_fair\_changed}, \texttt{runs/phase1\_patch\_overlap\_changed}, \texttt{runs/phase1\_patch\_depth\_changed}, \texttt{runs/intervene\_result.json}, \texttt{runs/audit/audit\_Q3.json}, \texttt{runs/audit/audit\_Q5.json}, \texttt{runs/r20c10/grid\_summary.json}, \texttt{runs/seeds/grid\_summary.json}, \texttt{runs/taxonomy/taxonomy\_q4q5.json}, \texttt{runs/r110}, \texttt{runs/vit\_sae/vit\_result.json}, and \texttt{logs/baselines\_pca.json}.
 
 \end{document}
