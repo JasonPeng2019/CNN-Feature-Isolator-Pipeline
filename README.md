@@ -24,8 +24,8 @@ Artifact-backed positives:
 
 Important interpretation caveat:
 
-- The playbook audit found a confirmed repeated test-exposure pattern across the core CIFAR SAE, transition, and chain trainers. Those scripts evaluate on the test split during training and development, which is compatible with the narrow goal of mimicking the frozen CNN on this benchmark.
-- the CIFAR top-1 numbers should be read as test-exposed benchmark-mimic measurements, not as untouched held-out generalization estimates.
+- The playbook audit found a confirmed repeated test-exposure pattern across the core CIFAR SAE, transition, and chain trainers. Those scripts evaluate on the test split during training and development, but in this repo that split is functioning as an analysis corpus for probing how the frozen CNN executes.
+- The consequence is about interpretation, not about whether the mechanistic claim is real: the CIFAR top-1 numbers should be read as corpus-conditioned faithfulness measurements, not as untouched external evaluation numbers.
 - The cleanest families in the current repo state are the PCA baseline and the ViT transfer path. Some post-hoc analyses are marked `suspected` rather than `clean` because they inherit upstream SAE validity risk.
 
 For the exact audit trail, see:

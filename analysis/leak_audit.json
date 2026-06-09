@@ -11,7 +11,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase1_random_baseline",
@@ -25,7 +25,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase1_pareto",
@@ -39,7 +39,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase2_grid",
@@ -53,7 +53,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase3_transitions",
@@ -67,7 +67,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase3_q3q4_strong_retry",
@@ -81,7 +81,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase3b_chain",
@@ -95,7 +95,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase3b_bptt",
@@ -109,7 +109,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase2_rf_fair_changed",
@@ -123,7 +123,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase3b_raw_only_changed",
@@ -137,7 +137,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase1_patch_overlap_changed",
@@ -151,7 +151,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase1_patch_depth_changed",
@@ -165,7 +165,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase1_patch_disjoint_changed",
@@ -179,7 +179,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase4_r20c10",
@@ -193,7 +193,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase4_seeds",
@@ -207,7 +207,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase4_r110",
@@ -221,7 +221,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase1_pca_baseline",

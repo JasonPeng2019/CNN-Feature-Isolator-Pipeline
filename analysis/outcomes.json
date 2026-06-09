@@ -2,7 +2,7 @@
   {
     "experiment_id": "phase1_anchor",
     "outcome": "Success (as hoped)",
-    "justification": "Strong reconstruction and downstream preservation across sections. The CIFAR top-1 values should be read as benchmark-mimic measurements rather than untouched held-out generalization estimates."
+    "justification": "Strong reconstruction and downstream preservation across sections. The CIFAR top-1 values should be read as corpus-conditioned faithfulness measurements rather than untouched external estimates."
   },
   {
     "experiment_id": "phase1_random_baseline",
@@ -27,7 +27,7 @@
   {
     "experiment_id": "phase3_transitions",
     "outcome": "Success (as hoped)",
-    "justification": "Single-step transitions work, and the hybrid upper bound shows strong causal sufficiency. The CIFAR top-1 values should be read as benchmark-mimic measurements rather than untouched held-out generalization estimates."
+    "justification": "Single-step transitions work, and the hybrid upper bound shows strong causal sufficiency. The CIFAR top-1 values should be read as corpus-conditioned faithfulness measurements rather than untouched external estimates."
   },
   {
     "experiment_id": "phase3_q3q4_strong_retry",

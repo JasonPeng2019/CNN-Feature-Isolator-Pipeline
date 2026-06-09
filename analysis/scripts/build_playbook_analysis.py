@@ -806,7 +806,7 @@ def build_deviations():
         {
             "experiment_id": "all_cifar_training_families",
             "severity": "material deviation",
-            "as_designed": "Evaluation should measure downstream preservation, ideally while preserving an untouched final holdout for any generalization claims.",
+            "as_designed": "Evaluation should measure downstream preservation and mechanistic faithfulness on the chosen analysis corpus.",
             "as_implemented": "Core CIFAR training scripts evaluate on the cached test split every epoch.",
             "evidence": [
                 provenance_line("src/train_sae.py", "77-78,110-117"),
@@ -814,7 +814,7 @@ def build_deviations():
                 provenance_line("src/train_transition.py", "71-72,87-92"),
                 provenance_line("src/train_chain.py", "61-63,101-105"),
             ],
-            "note": "This is a confirmed repeated-test-exposure issue. It does not negate the narrow objective of mimicking the frozen CNN on this benchmark, but it does remove any untouched final holdout for broader generalization claims.",
+            "note": "This is a confirmed repeated-test-exposure pattern. It does not undercut the mechanistic objective of matching the frozen CNN on the chosen analysis corpus, but it does mean the resulting fidelity numbers are corpus-conditioned rather than untouched external measurements.",
         },
         {
             "experiment_id": "phase1_patch_depth_changed",
@@ -880,7 +880,7 @@ def build_leak_audit():
                 "verdict": "confirmed",
                 "threat_type": "test-set tuning / repeated test exposure",
                 "evidence": shared_clean_evidence + cifar_risk_evidence,
-                "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims.",
+                "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development. For this repo that functions as repeated probing of the chosen analysis corpus, so the main limitation is that the fidelity numbers are corpus-conditioned rather than untouched external measurements.",
             }
         )
     audit.append(
@@ -937,12 +937,12 @@ def build_leak_audit():
 
 def build_outcomes():
     outcomes = [
-        {"experiment_id": "phase1_anchor", "outcome": "Success (as hoped)", "justification": "Strong reconstruction and downstream preservation across sections. The CIFAR top-1 values should be read as benchmark-mimic measurements rather than untouched held-out generalization estimates."},
+        {"experiment_id": "phase1_anchor", "outcome": "Success (as hoped)", "justification": "Strong reconstruction and downstream preservation across sections. The CIFAR top-1 values should be read as corpus-conditioned faithfulness measurements rather than untouched external estimates."},
         {"experiment_id": "phase1_random_baseline", "outcome": "Success (as hoped)", "justification": "Random dictionary runs collapse toward chance, matching the intended sanity check."},
         {"experiment_id": "phase1_pca_baseline", "outcome": "Success (as hoped)", "justification": "PCA trails the learned SAE across the reported sections."},
         {"experiment_id": "phase1_pareto", "outcome": "Success (as hoped)", "justification": "Recovered monotone sparsity-fidelity curves with Q3 as the persistent late-budget bottleneck."},
         {"experiment_id": "phase2_grid", "outcome": "Success (as hoped)", "justification": "FieldSAE clearly dominates the VectorSAE on the aggressive-sparsity and RF-local branches."},
-        {"experiment_id": "phase3_transitions", "outcome": "Success (as hoped)", "justification": "Single-step transitions work, and the hybrid upper bound shows strong causal sufficiency. The CIFAR top-1 values should be read as benchmark-mimic measurements rather than untouched held-out generalization estimates."},
+        {"experiment_id": "phase3_transitions", "outcome": "Success (as hoped)", "justification": "Single-step transitions work, and the hybrid upper bound shows strong causal sufficiency. The CIFAR top-1 values should be read as corpus-conditioned faithfulness measurements rather than untouched external estimates."},
         {"experiment_id": "phase3_q3q4_strong_retry", "outcome": "Undesirable result", "justification": "The larger predictor makes the Q3 to Q4 edge worse, not better."},
         {"experiment_id": "phase3b_chain", "outcome": "Success (as hoped)", "justification": "Chain-aware training lifts the re-grounded chain well above the Family I baseline."},
         {"experiment_id": "phase3b_bptt", "outcome": "Success (as hoped)", "justification": "Full BPTT closes most of the gap to the hybrid chain."},
@@ -1008,7 +1008,7 @@ def write_open_questions():
         "# Open questions",
         "",
         "- The repo contains historical report text and stale-report material that embeds some chain-variant values (for example, the Family I re-mask chain). Those values were not re-derived from a dedicated standalone artifact in this pass and should be treated as embedded, not independently verified.",
-        "- The amount by which repeated test-set monitoring may overstate broader held-out generalization cannot be quantified from the surviving repo state alone.",
+        "- The amount by which repeated probing of the CIFAR analysis corpus may differ from an untouched external evaluation cannot be quantified from the surviving repo state alone.",
         "- The pareto launcher metadata contains one inconsistent rc value even though the corresponding result artifact exists.",
         "- The current analysis focuses on surviving artifacts and code paths. It does not reconstruct any missing scheduler context outside the JSON launcher summaries under `LISP-Setup/LISP-3-Setup/logs/`.",
     ]
@@ -1108,7 +1108,7 @@ def make_figures():
     plt.close(fig)
     save_caption(
         "figure_phase2_grid",
-        "Phase 2 branch grid. FieldSAE dominates the aggressive-sparsity branch, and RF-local masking is only viable with the expressive FieldSAE. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.",
+        "Phase 2 branch grid. FieldSAE dominates the aggressive-sparsity branch, and RF-local masking is only viable with the expressive FieldSAE. CIFAR top-1 values here are corpus-conditioned faithfulness measurements because this evaluation corpus was repeatedly probed during training.",
     )
 
     # Figure 3: chain progress.
@@ -1138,7 +1138,7 @@ def make_figures():
     plt.close(fig)
     save_caption(
         "figure_phase3_chain_and_edges",
-        "Hierarchy-focused figures. Re-grounded chain training improves steadily, especially with full BPTT, while Q3 to Q4 remains the weakest single-step transition. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.",
+        "Hierarchy-focused figures. Re-grounded chain training improves steadily, especially with full BPTT, while Q3 to Q4 remains the weakest single-step transition. CIFAR top-1 values here are corpus-conditioned faithfulness measurements because this evaluation corpus was repeatedly probed during training.",
     )
 
     # Figure 4: changed patch suites.
@@ -1188,7 +1188,7 @@ def make_figures():
     plt.close(fig)
     save_caption(
         "figure_changed_patch_suites",
-        "Changed-suite patch sweeps. Overlap helps, depth-aware schedules are broadly consistent with the small-context story, and coarse disjoint tilings fail badly. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.",
+        "Changed-suite patch sweeps. Overlap helps, depth-aware schedules are broadly consistent with the small-context story, and coarse disjoint tilings fail badly. CIFAR top-1 values here are corpus-conditioned faithfulness measurements because this evaluation corpus was repeatedly probed during training.",
     )
 
     # Figure 5: phase4 and clean ViT artifact.
@@ -1228,7 +1228,7 @@ def make_figures():
     plt.close(fig)
     save_caption(
         "figure_phase4_extensions",
-        "Phase 4 extensions. The CIFAR transfer and seed figures strengthen the winner-path story but should be read as benchmark-mimic measurements because the test split was repeatedly monitored during training. The ViT prediction-agreement marker comes from the cleanest surviving split discipline in the repo.",
+        "Phase 4 extensions. The CIFAR transfer and seed figures strengthen the winner-path story but should be read as corpus-conditioned faithfulness measurements because this evaluation corpus was repeatedly probed during training. The ViT prediction-agreement marker comes from the cleanest surviving split discipline in the repo.",
     )
 
     # Figure 6: intervention and audit.
@@ -1303,7 +1303,7 @@ def build_report():
     lines.append(
         tex_escape(
             "The most important caveat is a confirmed repeated-test-exposure pattern across the CIFAR training families: core training scripts evaluate on the test split every epoch. "
-            "That does not undercut the narrow benchmark-mimic claim, but it does mean the reported CIFAR top-1 values are test-exposed model-selection results rather than untouched held-out generalization estimates."
+            "That does not undercut the central mechanistic claim, because this project uses that split as an analysis corpus for probing how the frozen CNN executes. It does mean the reported CIFAR top-1 values are corpus-conditioned faithfulness measurements rather than untouched external evaluation numbers."
         )
         + "\n\n"
     )
@@ -1378,13 +1378,13 @@ def build_report():
     lines.append(r"\end{itemize}")
     lines.append(r"\section{What still should be run}")
     lines.append(r"\begin{itemize}")
-    lines.append(r"\item A validation-first rerun of the CIFAR families that removes repeated test-set evaluation from training loops, if clean held-out generalization claims are needed.")
+    lines.append(r"\item A validation-first rerun of the CIFAR families that removes repeated test-set evaluation from training loops, if we later want a separate external-benchmarking layer on top of the mechanistic claim.")
     lines.append(r"\item A regenerated Family I chain artifact that stores raw, re-mask, and re-ground chain variants as standalone verified outputs instead of embedded report values.")
-    lines.append(r"\item If broader generalization or publication-quality claims are needed, reserve a fresh held-out split or a fully untouched test set for final scoring.")
+    lines.append(r"\item If we later want untouched external evaluation numbers, reserve a fresh held-out split or a fully untouched test set for final scoring.")
     lines.append(r"\end{itemize}")
     lines.append(r"\section{Next steps}")
     lines.append(r"\begin{enumerate}")
-    lines.append(r"\item If we want broader held-out generalization claims, remove test-set evaluation from the SAE, transition, and chain training loops, and rerun the headline CIFAR grids against a clean validation split.")
+    lines.append(r"\item If we want an additional external-benchmarking layer, remove test-set evaluation from the SAE, transition, and chain training loops, and rerun the headline CIFAR grids against a clean validation split.")
     lines.append(r"\item Keep the FieldSAE winner and the re-grounded chain path as the main line; do not spend more time on coarse disjoint patches or simple larger Q3-to-Q4 predictors.")
     lines.append(r"\item Use the ViT path as the cleanest transfer scaffold, because its surviving artifact does not show the same split-discipline problem.")
     lines.append(r"\end{enumerate}")

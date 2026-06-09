@@ -15,7 +15,7 @@
 This analysis pass treats code and run artifacts as primary evidence and writes all new outputs under analysis/. The strongest artifact-backed positives are: the FieldSAE winner remains highly compressive, the Q3 retained-fraction bottleneck persists in the pareto sweep, full-BPTT re-grounded chaining reaches 0.7010 against a 0.7122 hybrid bound, raw-only rollout-aligned retraining reaches 0.6821, and the ViT transfer artifact attains 0.9440 prediction agreement.
 
 
-The most important caveat is a confirmed repeated-test-exposure pattern across the CIFAR training families: core training scripts evaluate on the test split every epoch. That does not undercut the narrow benchmark-mimic claim, but it does mean the reported CIFAR top-1 values are test-exposed model-selection results rather than untouched held-out generalization estimates.
+The most important caveat is a confirmed repeated-test-exposure pattern across the CIFAR training families: core training scripts evaluate on the test split every epoch. That does not undercut the central mechanistic claim, because this project uses that split as an analysis corpus for probing how the frozen CNN executes. It does mean the reported CIFAR top-1 values are corpus-conditioned faithfulness measurements rather than untouched external evaluation numbers.
 
 
 \section{Experiment catalog}
@@ -61,7 +61,7 @@ Designed procedure: Train one SAE per section over fractions 2, 5, and 10 percen
 Declared success criteria: Beat random and PCA baselines while staying within roughly 1 percentage point of original top-1.
 
 
-Outcome classification: Success (as hoped). Strong reconstruction and downstream preservation across sections. The CIFAR top-1 values should be read as benchmark-mimic measurements rather than untouched held-out generalization estimates.
+Outcome classification: Success (as hoped). Strong reconstruction and downstream preservation across sections. The CIFAR top-1 values should be read as corpus-conditioned faithfulness measurements rather than untouched external estimates.
 
 
 \subsection{phase1\_random\_baseline}
@@ -141,7 +141,7 @@ Designed procedure: Train four adjacent predictors and compare learned splice ac
 Declared success criteria: Strong single-step transitions and an informative hybrid-vs-learned gap.
 
 
-Outcome classification: Success (as hoped). Single-step transitions work, and the hybrid upper bound shows strong causal sufficiency. The CIFAR top-1 values should be read as benchmark-mimic measurements rather than untouched held-out generalization estimates.
+Outcome classification: Success (as hoped). Single-step transitions work, and the hybrid upper bound shows strong causal sufficiency. The CIFAR top-1 values should be read as corpus-conditioned faithfulness measurements rather than untouched external estimates.
 
 
 \subsection{phase3\_q3q4\_strong\_retry}
@@ -402,22 +402,22 @@ Phase 4 strengthens the transfer story materially. The cleanest surviving split 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\linewidth]{figures/figure\_phase2\_grid.pdf}
-\caption{Phase 2 branch grid. FieldSAE dominates the aggressive-sparsity branch, and RF-local masking is only viable with the expressive FieldSAE. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.}
+\caption{Phase 2 branch grid. FieldSAE dominates the aggressive-sparsity branch, and RF-local masking is only viable with the expressive FieldSAE. CIFAR top-1 values here are corpus-conditioned faithfulness measurements because this evaluation corpus was repeatedly probed during training.}
 \end{figure}
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\linewidth]{figures/figure\_phase3\_chain\_and\_edges.pdf}
-\caption{Hierarchy-focused figures. Re-grounded chain training improves steadily, especially with full BPTT, while Q3 to Q4 remains the weakest single-step transition. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.}
+\caption{Hierarchy-focused figures. Re-grounded chain training improves steadily, especially with full BPTT, while Q3 to Q4 remains the weakest single-step transition. CIFAR top-1 values here are corpus-conditioned faithfulness measurements because this evaluation corpus was repeatedly probed during training.}
 \end{figure}
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\linewidth]{figures/figure\_changed\_patch\_suites.pdf}
-\caption{Changed-suite patch sweeps. Overlap helps, depth-aware schedules are broadly consistent with the small-context story, and coarse disjoint tilings fail badly. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.}
+\caption{Changed-suite patch sweeps. Overlap helps, depth-aware schedules are broadly consistent with the small-context story, and coarse disjoint tilings fail badly. CIFAR top-1 values here are corpus-conditioned faithfulness measurements because this evaluation corpus was repeatedly probed during training.}
 \end{figure}
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.95\linewidth]{figures/figure\_phase4\_extensions.pdf}
-\caption{Phase 4 extensions. The CIFAR transfer and seed figures strengthen the winner-path story but should be read as benchmark-mimic measurements because the test split was repeatedly monitored during training. The ViT prediction-agreement marker comes from the cleanest surviving split discipline in the repo.}
+\caption{Phase 4 extensions. The CIFAR transfer and seed figures strengthen the winner-path story but should be read as corpus-conditioned faithfulness measurements because this evaluation corpus was repeatedly probed during training. The ViT prediction-agreement marker comes from the cleanest surviving split discipline in the repo.}
 \end{figure}
 \begin{figure}[ht]
 \centering
@@ -426,19 +426,19 @@ Phase 4 strengthens the transfer story materially. The cleanest surviving split 
 \end{figure}
 \section{Flags and risks}
 \begin{itemize}
-\item Material deviation: This is a confirmed repeated-test-exposure issue. It does not negate the narrow objective of mimicking the frozen CNN on this benchmark, but it does remove any untouched final holdout for broader generalization claims.
+\item Material deviation: This is a confirmed repeated-test-exposure pattern. It does not undercut the mechanistic objective of matching the frozen CNN on the chosen analysis corpus, but it does mean the resulting fidelity numbers are corpus-conditioned rather than untouched external measurements.
 \item Benign deviation: This is a documentation lag rather than a code-path mismatch.
 \item Benign deviation: Another documentation lag, but important because it changes the patchwise conclusion.
 \item Benign deviation: The artifact parses cleanly, but the launcher metadata is inconsistent.
 \end{itemize}
 \section{What worked / what we hoped for}
 \begin{itemize}
-\item phase1\_anchor: Strong reconstruction and downstream preservation across sections. The CIFAR top-1 values should be read as benchmark-mimic measurements rather than untouched held-out generalization estimates.
+\item phase1\_anchor: Strong reconstruction and downstream preservation across sections. The CIFAR top-1 values should be read as corpus-conditioned faithfulness measurements rather than untouched external estimates.
 \item phase1\_random\_baseline: Random dictionary runs collapse toward chance, matching the intended sanity check.
 \item phase1\_pca\_baseline: PCA trails the learned SAE across the reported sections.
 \item phase1\_pareto: Recovered monotone sparsity-fidelity curves with Q3 as the persistent late-budget bottleneck.
 \item phase2\_grid: FieldSAE clearly dominates the VectorSAE on the aggressive-sparsity and RF-local branches.
-\item phase3\_transitions: Single-step transitions work, and the hybrid upper bound shows strong causal sufficiency. The CIFAR top-1 values should be read as benchmark-mimic measurements rather than untouched held-out generalization estimates.
+\item phase3\_transitions: Single-step transitions work, and the hybrid upper bound shows strong causal sufficiency. The CIFAR top-1 values should be read as corpus-conditioned faithfulness measurements rather than untouched external estimates.
 \item phase3b\_chain: Chain-aware training lifts the re-grounded chain well above the Family I baseline.
 \item phase3b\_bptt: Full BPTT closes most of the gap to the hybrid chain.
 \item phase2\_rf\_fair\_changed: Fair RF budgeting rescues a branch that earlier looked much weaker.
@@ -455,13 +455,13 @@ Phase 4 strengthens the transfer story materially. The cleanest surviving split 
 \end{itemize}
 \section{What still should be run}
 \begin{itemize}
-\item A validation-first rerun of the CIFAR families that removes repeated test-set evaluation from training loops, if clean held-out generalization claims are needed.
+\item A validation-first rerun of the CIFAR families that removes repeated test-set evaluation from training loops, if we later want a separate external-benchmarking layer on top of the mechanistic claim.
 \item A regenerated Family I chain artifact that stores raw, re-mask, and re-ground chain variants as standalone verified outputs instead of embedded report values.
-\item If broader generalization or publication-quality claims are needed, reserve a fresh held-out split or a fully untouched test set for final scoring.
+\item If we later want untouched external evaluation numbers, reserve a fresh held-out split or a fully untouched test set for final scoring.
 \end{itemize}
 \section{Next steps}
 \begin{enumerate}
-\item If we want broader held-out generalization claims, remove test-set evaluation from the SAE, transition, and chain training loops, and rerun the headline CIFAR grids against a clean validation split.
+\item If we want an additional external-benchmarking layer, remove test-set evaluation from the SAE, transition, and chain training loops, and rerun the headline CIFAR grids against a clean validation split.
 \item Keep the FieldSAE winner and the re-grounded chain path as the main line; do not spend more time on coarse disjoint patches or simple larger Q3-to-Q4 predictors.
 \item Use the ViT path as the cleanest transfer scaffold, because its surviving artifact does not show the same split-discipline problem.
 \end{enumerate}

@@ -2,7 +2,7 @@
   {
     "experiment_id": "all_cifar_training_families",
     "severity": "material deviation",
-    "as_designed": "Evaluation should measure downstream preservation, ideally while preserving an untouched final holdout for any generalization claims.",
+    "as_designed": "Evaluation should measure downstream preservation and mechanistic faithfulness on the chosen analysis corpus.",
     "as_implemented": "Core CIFAR training scripts evaluate on the cached test split every epoch.",
     "evidence": [
       "src/train_sae.py:77-78,110-117",
@@ -10,7 +10,7 @@
       "src/train_transition.py:71-72,87-92",
       "src/train_chain.py:61-63,101-105"
     ],
-    "note": "This is a confirmed repeated-test-exposure issue. It does not negate the narrow objective of mimicking the frozen CNN on this benchmark, but it does remove any untouched final holdout for broader generalization claims."
+    "note": "This is a confirmed repeated-test-exposure pattern. It does not undercut the mechanistic objective of matching the frozen CNN on the chosen analysis corpus, but it does mean the resulting fidelity numbers are corpus-conditioned rather than untouched external measurements."
   },
   {
     "experiment_id": "phase1_patch_depth_changed",

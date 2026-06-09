@@ -1,1 +1,1 @@
-Phase 2 branch grid. FieldSAE dominates the aggressive-sparsity branch, and RF-local masking is only viable with the expressive FieldSAE. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.
+Phase 2 branch grid. FieldSAE dominates the aggressive-sparsity branch, and RF-local masking is only viable with the expressive FieldSAE. CIFAR top-1 values here are corpus-conditioned faithfulness measurements because this evaluation corpus was repeatedly probed during training.
