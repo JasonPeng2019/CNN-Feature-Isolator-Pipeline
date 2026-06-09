@@ -1,0 +1,281 @@
+[
+  {
+    "experiment_id": "phase1_anchor",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase1_random_baseline",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase1_pareto",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase2_grid",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase3_transitions",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase3_q3q4_strong_retry",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase3b_chain",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase3b_bptt",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase2_rf_fair_changed",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase3b_raw_only_changed",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase1_patch_overlap_changed",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase1_patch_depth_changed",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase1_patch_disjoint_changed",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase4_r20c10",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase4_seeds",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase4_r110",
+    "verdict": "confirmed",
+    "threat_type": "test-set tuning / repeated test exposure",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "Train/test split separation is clean by construction, and normalization is fit on train activations only. The confirmed issue is repeated evaluation on the test split during training and development, which is compatible with the narrow benchmark-mimic objective but leaves no untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase1_pca_baseline",
+    "verdict": "clean",
+    "threat_type": "no confirmed leakage found",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/controls.py:31-49"
+    ],
+    "note": "The PCA baseline fits on train activations and evaluates once on the cached test activations."
+  },
+  {
+    "experiment_id": "phase4_taxonomy",
+    "verdict": "suspected",
+    "threat_type": "inherits upstream validity risk from previously trained CIFAR SAEs",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/taxonomy.py:69-110"
+    ],
+    "note": "The taxonomy models train on the train split and evaluate once on the cached test split, but they build on winner SAEs that were trained under confirmed repeated test-set exposure."
+  },
+  {
+    "experiment_id": "tier1_intervention",
+    "verdict": "suspected",
+    "threat_type": "inherits upstream validity risk from previously trained CIFAR SAEs",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/intervene.py:91-103"
+    ],
+    "note": "The intervention audit itself is a post-hoc analysis, but it uses winner SAEs trained under confirmed repeated test-set exposure."
+  },
+  {
+    "experiment_id": "tier2_feature_audit",
+    "verdict": "suspected",
+    "threat_type": "inherits upstream validity risk from previously trained CIFAR SAEs",
+    "evidence": [
+      "src/data.py:18-30",
+      "src/cache_activations.py:37-45,57-60",
+      "src/feature_audit.py:50-85"
+    ],
+    "note": "The feature audit is post-hoc, but it uses winner SAEs trained under confirmed repeated test-set exposure."
+  },
+  {
+    "experiment_id": "phase4_vit_transfer",
+    "verdict": "clean",
+    "threat_type": "no confirmed leakage found",
+    "evidence": [
+      "src/vit_sae.py:65-72",
+      "src/vit_sae.py:79-81",
+      "src/vit_sae.py:96-112"
+    ],
+    "note": "The ViT transfer trains on Imagenette train split, computes normalization on train tokens, and evaluates once on the val split."
+  }
+]

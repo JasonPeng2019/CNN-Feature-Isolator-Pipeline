@@ -24,3 +24,28 @@ The defensible statement: *vision-model activation fields are compressible into 
 - **N8 parent→child intervention** to test causal tree structure, not just predictive sufficiency.
 - **Architectural re-grounding**: bake the decode→re-encode→mask into the predictor as a differentiable layer (train through it) — may close the 0.662→0.712 gap.
 - **Family II from-scratch** (not warm-started) + full BPTT through re-grounding.
+
+---
+
+## Addendum — Full-BPTT Family II follow-up
+
+**Artifact:** `runs/phase3b_bptt/result.json`
+
+This later follow-up keeps the Phase 3b re-grounded carrier, but pushes the chain-aware training further with explicit full BPTT through the rollout.
+
+## Chained Q1→Q5 top-1
+
+| chain variant | Phase 3b original | Phase 3b + BPTT | causal bound (hybrid) | orig |
+|---|---:|---:|---:|---:|
+| raw learned (no re-grounding) | 0.0128 | 0.0109 | — | — |
+| **re-grounded each step** | 0.6624 | **0.7010** | 0.7122 | 0.718 |
+
+## What changed
+
+1. **Full-BPTT closes most of the remaining gap.** The re-grounded chain improves from `0.6624` to **`0.7010`**, leaving only about `1.1` points to the hybrid upper bound (`0.7122`).
+2. **The main story is still about re-grounding, not raw rollout.** The raw chain remains at chance (`0.0109`), so stronger optimization alone does not make manifold projection optional in this setup.
+3. **Family II is now much closer to a practical chain.** With re-grounding plus rollout-aware optimization, the learned chain is no longer just “better than Family I”; it is close to the best causal path available without handing control back to the frozen real blocks.
+
+## Updated takeaway
+
+The conservative Phase 3b conclusion was that chain-aware training helps but does not fully resolve the hierarchy gap. The newer BPTT follow-up strengthens that: **chain-aware training plus re-grounding gets very close to the causal upper bound**, while the pure raw-code chain still fails. So the most defensible current claim is not merely that re-grounding stabilizes the hierarchy; it is that re-grounded Family II transitions can carry almost all of the useful signal across the full `Q1 -> Q5` chain.

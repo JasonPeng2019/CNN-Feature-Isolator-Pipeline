@@ -1,0 +1,337 @@
+[
+  {
+    "id": "phase1_anchor",
+    "purpose": "Anchor reconstruction with VectorSAE plus global masking.",
+    "code_paths": [
+      "src/train_sae.py",
+      "scripts/run_grid.py",
+      "src/eval.py"
+    ],
+    "config_paths": [
+      "runs/phase1/grid_summary.json"
+    ],
+    "result_paths": [
+      "runs/phase1"
+    ],
+    "stage": "Phase 1",
+    "parallel_group": "section x retained_fraction"
+  },
+  {
+    "id": "phase1_random_baseline",
+    "purpose": "Random-dictionary sanity checks against the trained SAE anchor.",
+    "code_paths": [
+      "src/train_sae.py",
+      "src/eval.py"
+    ],
+    "config_paths": [
+      "logs/phase1_rand__*_result.json"
+    ],
+    "result_paths": [
+      "logs/phase1_rand__*_result.json"
+    ],
+    "stage": "Phase 1",
+    "parallel_group": "selected section x retained_fraction"
+  },
+  {
+    "id": "phase1_pca_baseline",
+    "purpose": "Linear PCA baseline at matched or larger coefficient budgets.",
+    "code_paths": [
+      "src/controls.py",
+      "src/eval.py"
+    ],
+    "config_paths": [
+      "runs/baselines_pca.json"
+    ],
+    "result_paths": [
+      "runs/baselines_pca.json"
+    ],
+    "stage": "Phase 1",
+    "parallel_group": "section x PCA rank"
+  },
+  {
+    "id": "phase1_pareto",
+    "purpose": "Fine retained-fraction sweep on the FieldSAE winner.",
+    "code_paths": [
+      "src/train_sae.py",
+      "scripts/run_grid.py",
+      "src/eval.py"
+    ],
+    "config_paths": [
+      "runs/pareto/grid_summary.json"
+    ],
+    "result_paths": [
+      "runs/pareto"
+    ],
+    "stage": "Phase 1 addendum",
+    "parallel_group": "section x retained_fraction"
+  },
+  {
+    "id": "phase2_grid",
+    "purpose": "Branch grid over Field/Vector SAE and global/RF masking.",
+    "code_paths": [
+      "src/train_sae.py",
+      "scripts/run_grid.py",
+      "src/eval.py"
+    ],
+    "config_paths": [
+      "runs/phase2/grid_summary.json"
+    ],
+    "result_paths": [
+      "runs/phase2"
+    ],
+    "stage": "Phase 2",
+    "parallel_group": "cell x section x mask_budget"
+  },
+  {
+    "id": "phase3_transitions",
+    "purpose": "Family I adjacent sparse-code transitions and frozen-block hybrid bound.",
+    "code_paths": [
+      "src/train_transition.py",
+      "src/transitions.py",
+      "src/eval.py"
+    ],
+    "config_paths": [
+      "runs/phase3/T_Q*_Q*/result.json"
+    ],
+    "result_paths": [
+      "runs/phase3"
+    ],
+    "stage": "Phase 3",
+    "parallel_group": "adjacent section transition"
+  },
+  {
+    "id": "phase3_q3q4_strong_retry",
+    "purpose": "Capacity-scaled retry of the Q3 to Q4 transition bottleneck.",
+    "code_paths": [
+      "src/train_transition.py",
+      "src/transitions.py"
+    ],
+    "config_paths": [
+      "runs/T1_3_Q3Q4_strong/result.json"
+    ],
+    "result_paths": [
+      "runs/T1_3_Q3Q4_strong"
+    ],
+    "stage": "Phase 3 addendum",
+    "parallel_group": "single focused retry"
+  },
+  {
+    "id": "phase3b_chain",
+    "purpose": "Chain-aware scheduled-sampling training with re-grounding.",
+    "code_paths": [
+      "src/train_chain.py",
+      "src/eval_chain.py"
+    ],
+    "config_paths": [
+      "runs/phase3b/result.json"
+    ],
+    "result_paths": [
+      "runs/phase3b"
+    ],
+    "stage": "Phase 3b",
+    "parallel_group": "epoch progression"
+  },
+  {
+    "id": "phase3b_bptt",
+    "purpose": "Full-BPTT chain-aware training through differentiable re-grounding.",
+    "code_paths": [
+      "src/train_chain.py",
+      "src/eval_chain.py"
+    ],
+    "config_paths": [
+      "runs/phase3b_bptt/result.json"
+    ],
+    "result_paths": [
+      "runs/phase3b_bptt"
+    ],
+    "stage": "Phase 3b addendum",
+    "parallel_group": "epoch progression"
+  },
+  {
+    "id": "phase2_rf_fair_changed",
+    "purpose": "Fair-budget RF-local masking rerun.",
+    "code_paths": [
+      "src/train_sae_changed.py",
+      "scripts/run_grid_changed.py"
+    ],
+    "config_paths": [
+      "runs/phase2_rf_fair_changed/grid_summary.json"
+    ],
+    "result_paths": [
+      "runs/phase2_rf_fair_changed"
+    ],
+    "stage": "Phase 3b changed",
+    "parallel_group": "section x retained_fraction"
+  },
+  {
+    "id": "phase3b_raw_only_changed",
+    "purpose": "Rollout-aligned raw-carrier chain retraining without re-grounding.",
+    "code_paths": [
+      "src/train_chain_changed.py"
+    ],
+    "config_paths": [
+      "runs/phase3b_raw_only_changed/result.json"
+    ],
+    "result_paths": [
+      "runs/phase3b_raw_only_changed"
+    ],
+    "stage": "Phase 3b changed",
+    "parallel_group": "epoch progression"
+  },
+  {
+    "id": "phase1_patch_overlap_changed",
+    "purpose": "Overlapping patchwise SAE retry.",
+    "code_paths": [
+      "src/train_sae_changed.py",
+      "scripts/run_grid_changed.py"
+    ],
+    "config_paths": [
+      "runs/phase1_patch_overlap_changed/grid_summary.json"
+    ],
+    "result_paths": [
+      "runs/phase1_patch_overlap_changed"
+    ],
+    "stage": "Phase 3b changed",
+    "parallel_group": "section x patch_multiplier x retained_fraction"
+  },
+  {
+    "id": "phase1_patch_depth_changed",
+    "purpose": "Depth-aware overlapping patchwise SAE sweep.",
+    "code_paths": [
+      "src/train_sae_changed.py",
+      "scripts/run_grid_changed.py"
+    ],
+    "config_paths": [
+      "runs/phase1_patch_depth_changed/grid_summary.json"
+    ],
+    "result_paths": [
+      "runs/phase1_patch_depth_changed"
+    ],
+    "stage": "Phase 3b changed",
+    "parallel_group": "section x depth_schedule x retained_fraction"
+  },
+  {
+    "id": "phase1_patch_disjoint_changed",
+    "purpose": "Disjoint patchwise SAE sweep.",
+    "code_paths": [
+      "src/train_sae_changed.py",
+      "scripts/run_grid_changed.py"
+    ],
+    "config_paths": [
+      "runs/phase1_patch_disjoint_changed/grid_summary.json"
+    ],
+    "result_paths": [
+      "runs/phase1_patch_disjoint_changed"
+    ],
+    "stage": "Phase 3b changed",
+    "parallel_group": "section x patch_multiplier"
+  },
+  {
+    "id": "phase4_r20c10",
+    "purpose": "ResNet-20 on CIFAR-10 transfer grid for the winner recipe.",
+    "code_paths": [
+      "src/train_sae.py",
+      "scripts/run_grid.py"
+    ],
+    "config_paths": [
+      "runs/r20c10/grid_summary.json"
+    ],
+    "result_paths": [
+      "runs/r20c10"
+    ],
+    "stage": "Phase 4",
+    "parallel_group": "section x retained_fraction"
+  },
+  {
+    "id": "phase4_seeds",
+    "purpose": "Seed-stability grid on the ResNet-56 / CIFAR-100 winner setup.",
+    "code_paths": [
+      "src/train_sae.py",
+      "scripts/run_grid.py"
+    ],
+    "config_paths": [
+      "runs/seeds/grid_summary.json"
+    ],
+    "result_paths": [
+      "runs/seeds"
+    ],
+    "stage": "Phase 4",
+    "parallel_group": "section x seed"
+  },
+  {
+    "id": "phase4_taxonomy",
+    "purpose": "Transition taxonomy comparing sparse, dense, and cross carriers.",
+    "code_paths": [
+      "src/taxonomy.py"
+    ],
+    "config_paths": [
+      "runs/taxonomy/taxonomy_q4q5.json"
+    ],
+    "result_paths": [
+      "runs/taxonomy"
+    ],
+    "stage": "Phase 4",
+    "parallel_group": "representation condition"
+  },
+  {
+    "id": "phase4_r110",
+    "purpose": "ResNet-110 reconstruction sweep on CIFAR-100.",
+    "code_paths": [
+      "src/train_sae.py"
+    ],
+    "config_paths": [
+      "runs/r110/F_Q*/result.json"
+    ],
+    "result_paths": [
+      "runs/r110"
+    ],
+    "stage": "Phase 4",
+    "parallel_group": "section"
+  },
+  {
+    "id": "phase4_vit_transfer",
+    "purpose": "FieldSAE transfer to a pretrained ViT block on Imagenette.",
+    "code_paths": [
+      "src/vit_sae.py"
+    ],
+    "config_paths": [
+      "runs/vit_sae/vit_result.json"
+    ],
+    "result_paths": [
+      "runs/vit_sae"
+    ],
+    "stage": "Phase 4",
+    "parallel_group": "single ViT transfer artifact"
+  },
+  {
+    "id": "tier1_intervention",
+    "purpose": "Parent-to-child intervention audit of importance and locality.",
+    "code_paths": [
+      "src/intervene.py"
+    ],
+    "config_paths": [
+      "runs/intervene_result.json"
+    ],
+    "result_paths": [
+      "runs/intervene_result.json"
+    ],
+    "stage": "Tier 1 follow-up",
+    "parallel_group": "adjacent section transition"
+  },
+  {
+    "id": "tier2_feature_audit",
+    "purpose": "Dictionary dead-feature and duplicate-feature audit.",
+    "code_paths": [
+      "src/feature_audit.py"
+    ],
+    "config_paths": [
+      "runs/audit/audit_Q3.json",
+      "runs/audit/audit_Q5.json"
+    ],
+    "result_paths": [
+      "runs/audit"
+    ],
+    "stage": "Tier 2 follow-up",
+    "parallel_group": "section"
+  }
+]

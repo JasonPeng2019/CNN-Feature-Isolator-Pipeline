@@ -21,18 +21,15 @@ Present `_changed` artifact families:
 - `runs/phase3b_raw_only_changed`
 - `runs/phase1_patch_overlap_changed`
 - `runs/phase1_patch_depth_changed`
-
-Missing `_changed` artifact family:
-
 - `runs/phase1_patch_disjoint_changed`
 
-So the changed suite is partly complete:
+So the changed suite is now complete for the intended surviving families:
 
 - RF fairness: complete
 - raw-only retraining: complete
 - overlap patch sweep: complete
-- depth-aware patch sweep: partial
-- disjoint patch sweep: no artifact directory present
+- depth-aware patch sweep: complete
+- disjoint patch sweep: complete
 
 ## Experiment 1: Fair-Budget RF
 
@@ -163,19 +160,13 @@ This variant asks whether patch size should shrink with depth so that deeper lay
 
 ### Completion
 
-- `25` result cells present
-- full planned sweep was larger than this
+- `60/60` result cells present
 
-So this run is **partial**, not complete.
+This is a complete sweep over:
 
-### What completed
-
-The present artifact set covers:
-
-- all `Q1` cells across schedules and fractions
-- all `Q2` cells across schedules and fractions
-- early `Q3` cells
-- no complete late-section coverage for the full schedule sweep
+- schedules `a, b, c, d`
+- sections `Q1..Q5`
+- fractions `0.02`, `0.05`, `0.10`
 
 Representative completed results:
 
@@ -183,15 +174,19 @@ Representative completed results:
 - `PD_schedule_b_Q1_f0.10`: top-1 `0.7176`
 - `PD_schedule_a_Q2_f0.05`: top-1 `0.7156`
 - `PD_schedule_a_Q3_f0.02`: top-1 `0.7020`
+- `PD_schedule_a_Q4_f0.05`: top-1 `0.7184`
+- `PD_schedule_a_Q5_f0.05`: top-1 `0.7183`
 
 ### Interpretation
 
-The early evidence suggests:
+The finished sweep changes the earlier reading:
 
-- the less aggressive schedule staying near the base CNN filter size performs better than the enlarged early-patch schedule
-- in the completed subset, `schedule_b` looks stronger than `schedule_a`
+- schedules `b` and `c` are strongest overall by mean top-1 (`0.7128`), but the gap over `a` is small
+- the best completed cells are not exotic: `Q4` and `Q5` at `5%` still hit `0.7184` / `0.7183`
+- `Q3` remains the hardest section here too; its best completed depth-aware cell is `PD_schedule_a_Q3_f0.05 = 0.7153`
+- schedule `d` is the only clearly weaker family, especially in later sections (`Q4/Q5`)
 
-But because the run is partial, this should be treated as provisional rather than final.
+So the depth-aware story is no longer provisional. The more moderate schedules are viable, but they do **not** fundamentally beat the simpler overlapping-patch baseline; they mainly confirm that avoiding oversized patches early is the right instinct.
 
 ## Experiment 3c: Disjoint Patchwise SAE
 
@@ -201,12 +196,33 @@ This was meant to test whether disjoint patch tilings might behave differently f
 
 ### Artifact status
 
-- no `runs/phase1_patch_disjoint_changed` directory is present
-- no completed result set is available in the repo tree
+- `runs/phase1_patch_disjoint_changed`
+- launcher summary: `LISP-3-Setup/logs/patch_disjoint_changed_summary.json` with `rc=0`
+- `20/20` result cells present
+
+### Best results and pattern
+
+Best `5%` cells by section:
+
+- `PDJ_Q1_m0.5_f0.05`: `0.7158`
+- `PDJ_Q2_m0.5_f0.05`: `0.7049`
+- `PDJ_Q3_m0.5_f0.05`: `0.7104`
+- `PDJ_Q4_m0.5_f0.05`: `0.7184`
+- `PDJ_Q5_m0.5_f0.05`: `0.7183`
+
+The striking pattern is that **the smallest patch family (`m0.5`) wins every section**. Increasing the disjoint patch size is actively harmful:
+
+- `Q1`: `0.7158` at `m0.5` falls to `0.5942`, `0.2472`, `0.1260`
+- `Q3`: `0.7104` at `m0.5` falls to `0.6587`, `0.4134`, `0.0726`
+- `Q4/Q5`: even deep sections collapse once the disjoint patches get too coarse
 
 ### Interpretation
 
-This is not a negative result. It is an absent artifact. The only defensible statement is that the disjoint patch experiment does not currently appear to have run to completion in the surviving repo state.
+This is a real, completed negative result for coarse disjoint tilings:
+
+- disjoint patches can work when they are very small
+- larger disjoint tiles are much worse than overlapping scanning
+- the project’s patchwise lesson is therefore not just “local context helps,” but more specifically “**overlap matters, and coarse non-overlapping tilings destroy too much structure**”
 
 ## Combined Interpretation
 
@@ -220,9 +236,9 @@ The fair-budget RF rerun shows that RF-local masking remains viable when the bud
 
 The raw-only retraining run shows that repeated manifold projection is helpful, but not uniquely necessary. A strong raw chain can re-emerge when the model is trained directly on rollout conditions.
 
-### 3. The old vector baseline failed partly because it had too little spatial context
+### 3. The old vector baseline failed partly because it had too little spatial context, and overlap matters
 
-The overlapping patchwise rerun shows that local patch context helps, but the best patch is usually the smallest CNN-filter-scaled one, not the biggest one. More spatial context helps up to a point; after that it can wash out the useful local structure.
+The overlapping patchwise rerun shows that local patch context helps, but the best patch is usually the smallest CNN-filter-scaled one, not the biggest one. The disjoint rerun sharpens that further: small patches can work, but **non-overlapping coarse tilings are a bad substitute for overlapping local scanning**.
 
 ## Bottom Line
 
@@ -231,8 +247,8 @@ The strongest updated Phase 3b changed conclusions are:
 - RF-locality remains viable under fair budgeting.
 - Raw-chain collapse is substantially recoverable under rollout-aligned retraining.
 - Patchwise/vector-style sparse coding improves when given local overlapping context.
+- Depth-aware patch scheduling is complete and broadly consistent with the “small local context” story, but not clearly better than the simpler overlap baseline.
+- Disjoint patch coding only works at the smallest patch size; coarse disjoint tilings fail badly.
 - Larger patches are not automatically better.
-- The depth-aware patch story is still incomplete.
-- The disjoint patch story is still untested in the surviving artifact tree.
 
 These changed runs do not erase the original Phase 3 / 3b findings. They refine them. The revised lesson is not that the earlier conclusions were wrong, but that they were sometimes too strong or too narrow because they were based on less fair RF accounting, less rollout-aligned chain training, and a weaker patchwise baseline.

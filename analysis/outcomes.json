@@ -1,0 +1,107 @@
+[
+  {
+    "experiment_id": "phase1_anchor",
+    "outcome": "Success (as hoped)",
+    "justification": "Strong reconstruction and downstream preservation across sections. The CIFAR top-1 values should be read as benchmark-mimic measurements rather than untouched held-out generalization estimates."
+  },
+  {
+    "experiment_id": "phase1_random_baseline",
+    "outcome": "Success (as hoped)",
+    "justification": "Random dictionary runs collapse toward chance, matching the intended sanity check."
+  },
+  {
+    "experiment_id": "phase1_pca_baseline",
+    "outcome": "Success (as hoped)",
+    "justification": "PCA trails the learned SAE across the reported sections."
+  },
+  {
+    "experiment_id": "phase1_pareto",
+    "outcome": "Success (as hoped)",
+    "justification": "Recovered monotone sparsity-fidelity curves with Q3 as the persistent late-budget bottleneck."
+  },
+  {
+    "experiment_id": "phase2_grid",
+    "outcome": "Success (as hoped)",
+    "justification": "FieldSAE clearly dominates the VectorSAE on the aggressive-sparsity and RF-local branches."
+  },
+  {
+    "experiment_id": "phase3_transitions",
+    "outcome": "Success (as hoped)",
+    "justification": "Single-step transitions work, and the hybrid upper bound shows strong causal sufficiency. The CIFAR top-1 values should be read as benchmark-mimic measurements rather than untouched held-out generalization estimates."
+  },
+  {
+    "experiment_id": "phase3_q3q4_strong_retry",
+    "outcome": "Undesirable result",
+    "justification": "The larger predictor makes the Q3 to Q4 edge worse, not better."
+  },
+  {
+    "experiment_id": "phase3b_chain",
+    "outcome": "Success (as hoped)",
+    "justification": "Chain-aware training lifts the re-grounded chain well above the Family I baseline."
+  },
+  {
+    "experiment_id": "phase3b_bptt",
+    "outcome": "Success (as hoped)",
+    "justification": "Full BPTT closes most of the gap to the hybrid chain."
+  },
+  {
+    "experiment_id": "phase2_rf_fair_changed",
+    "outcome": "Success (unexpected)",
+    "justification": "Fair RF budgeting rescues a branch that earlier looked much weaker."
+  },
+  {
+    "experiment_id": "phase3b_raw_only_changed",
+    "outcome": "Success (unexpected)",
+    "justification": "Rollout-aligned retraining recovers a strong raw chain instead of chance collapse."
+  },
+  {
+    "experiment_id": "phase1_patch_overlap_changed",
+    "outcome": "Success (unexpected)",
+    "justification": "Patchwise overlap materially improves over the pointwise vector baseline."
+  },
+  {
+    "experiment_id": "phase1_patch_depth_changed",
+    "outcome": "Success (unexpected)",
+    "justification": "Depth-aware schedules complete cleanly and broadly support the small-context story."
+  },
+  {
+    "experiment_id": "phase1_patch_disjoint_changed",
+    "outcome": "Undesirable result",
+    "justification": "Coarse disjoint tilings fail badly; only the smallest disjoint scale remains competitive."
+  },
+  {
+    "experiment_id": "phase4_r20c10",
+    "outcome": "Success (as hoped)",
+    "justification": "The winner recipe survives the ResNet-20 / CIFAR-10 transfer grid."
+  },
+  {
+    "experiment_id": "phase4_seeds",
+    "outcome": "Success (as hoped)",
+    "justification": "Seed variation is small enough that the qualitative story survives."
+  },
+  {
+    "experiment_id": "phase4_taxonomy",
+    "outcome": "Success (as hoped)",
+    "justification": "Sparse is the best transition carrier among the tested alternatives."
+  },
+  {
+    "experiment_id": "phase4_r110",
+    "outcome": "Success (as hoped)",
+    "justification": "The winner recipe transfers to a deeper CNN and preserves the Q3 bottleneck pattern."
+  },
+  {
+    "experiment_id": "phase4_vit_transfer",
+    "outcome": "Success (as hoped)",
+    "justification": "The ViT transfer artifact achieves high prediction agreement with low KL at 5 percent retained."
+  },
+  {
+    "experiment_id": "tier1_intervention",
+    "outcome": "Success (as hoped)",
+    "justification": "Interventions show strong importance and locality concentration, though they inherit upstream SAE validity risks."
+  },
+  {
+    "experiment_id": "tier2_feature_audit",
+    "outcome": "Success (as hoped)",
+    "justification": "Dead-feature and duplicate-feature rates are low in the audited sections."
+  }
+]

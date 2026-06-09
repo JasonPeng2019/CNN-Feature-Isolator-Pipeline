@@ -1,0 +1,1 @@
+Tier follow-up audits. The intervention ratios are large and the audited dictionaries have low dead-feature and duplicate-feature rates. These analyses inherit upstream CIFAR training validity risks because they depend on previously trained SAEs.

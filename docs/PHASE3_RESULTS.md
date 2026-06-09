@@ -37,3 +37,25 @@ Q1→Q2 learned transition **matches the causal upper bound exactly**. Deeper, r
 This is the doc's own contingency made concrete: **independent SAEs reconstruct and transition single-step, but Family-I chains need re-grounding.** The principled fix is **Family II (incremental dependent codes)** — train predictors exposed to their own (re-grounded) predicted inputs (scheduled sampling) and/or train the chain end-to-end with per-step reconstruction. Phase 3b implements this, initialized from the Family-I predictors.
 
 New experiments this motivates: **N-exposure** (scheduled sampling during transition training), **N-reground** (build re-grounding into the architecture as the default), and quantifying the per-step error-compounding curve.
+
+---
+
+## Addendum — Focused `Q3 -> Q4` strong-predictor retry
+
+**Artifact:** `runs/T1_3_Q3Q4_strong/result.json`
+
+Because `Q3 -> Q4` was the clear weakest edge in the original transition table, this follow-up retrained that single step with a stronger predictor (`depth=3`, `hidden=512`, `30` epochs, `lr=0.002`).
+
+### Final result
+
+| transition | learned spliced top-1 | pred agree | KL(orig‖spliced) | relL2 | hybrid top-1 |
+|---|---:|---:|---:|---:|---:|
+| Q3→Q4 strong retry | **0.5344** | 0.5790 | 1.4641 | 0.6454 | 0.7113 |
+
+### Interpretation
+
+1. **Naively making the predictor larger did not fix the bottleneck.** The strong retry finishes at `0.5344`, which is materially worse than the original Phase 3 `Q3 -> Q4` learned transition (`0.650`).
+2. **The hard part is not just capacity.** Even with a deeper/wider predictor and longer training, the learned path remains far from the frozen-block causal upper bound (`0.7113`).
+3. **This strengthens the original diagnosis.** The `16^2 -> 8^2` step is not a bottleneck that disappears with a straightforward MLP upgrade; it likely needs a qualitatively better transition mechanism, such as explicit multi-scale structure, architecture-aware downsampling, or chain-aware training.
+
+So the original Phase 3 conclusion still stands, and this follow-up makes it sharper: `Q3 -> Q4` is the stubborn edge, and simple predictor scaling is not an adequate remedy.

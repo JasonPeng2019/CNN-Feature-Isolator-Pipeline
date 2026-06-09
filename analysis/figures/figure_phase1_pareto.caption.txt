@@ -1,0 +1,1 @@
+Phase 1 reconstruction curves. The anchor VectorSAE needs more budget on early sections, while the FieldSAE pareto sweep reaches its useful regime by roughly 3 to 8 percent on most sections. Interpret CIFAR top-1 values with caution because the training scripts repeatedly evaluate on the test split.

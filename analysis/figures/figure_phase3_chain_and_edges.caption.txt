@@ -1,0 +1,1 @@
+Hierarchy-focused figures. Re-grounded chain training improves steadily, especially with full BPTT, while Q3 to Q4 remains the weakest single-step transition. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.

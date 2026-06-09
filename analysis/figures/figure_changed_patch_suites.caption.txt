@@ -1,0 +1,1 @@
+Changed-suite patch sweeps. Overlap helps, depth-aware schedules are broadly consistent with the small-context story, and coarse disjoint tilings fail badly. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.

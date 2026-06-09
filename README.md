@@ -1,108 +1,115 @@
-# HIGH_DIM_PROJ — Sparse Signal-Field SAEs for Hierarchical Vision Representations
+# HIGH_DIM_PROJ
 
-Testing whether a frozen vision model's internal activations are **secretly sparse** — compressible into a few "feature-at-a-location" coefficients — and whether sparse features at one layer **build** the next layer's (a learned "sparsity tree").
+Sparse autoencoder experiments over frozen vision backbones, aimed at testing whether intermediate activations are compressible into a sparse spatial code and whether those sparse codes can support layer-to-layer transitions.
 
-**Backbone:** ResNet-56 / CIFAR-100 (71.83% top-1), frozen. Also ResNet-20/CIFAR-10 (92.3%) and ResNet-110/CIFAR-100 (73.25%).
+## Current status
 
-📄 **Full report:** [`report/REPORT.pdf`](report/REPORT.pdf) (14 pp, 13 figures) · source [`report/REPORT.md`](report/REPORT.md)
-📊 **Figures:** [`report/plots/`](report/plots/) (PNG), [`report/figures_pdf/`](report/figures_pdf/) (per-figure PDF), [`report/all_figures.pdf`](report/all_figures.pdf) (combined)
+The current source of truth is the playbook-style analysis package under [`analysis/`](analysis/). It reconciles guide docs, code, and surviving run artifacts, then compiles a fresh report to [`analysis/report.pdf`](analysis/report.pdf).
 
----
+Use this precedence when reading the repo:
 
-## TL;DR of findings
+1. [`analysis/report.pdf`](analysis/report.pdf) and the supporting manifest files in [`analysis/`](analysis/)
+2. phase writeups in [`docs/PHASE1_RESULTS.md`](docs/PHASE1_RESULTS.md) through [`docs/PHASE4_RESULTS.md`](docs/PHASE4_RESULTS.md)
+3. archived manuscript material in [`report/`](report/) when you need historical context
 
-1. **Activations are highly compressible.** Keeping just **2–5% of coefficients** rebuilds any layer so well that accuracy drops **<1 point** — beating PCA and a random dictionary (≈chance). At Q5, the SAE-spliced model agrees with the original CNN on **97.6%** of predictions.
-2. **A convolutional "field" SAE wins** (+5–8 pts over a per-location SAE at aggressive sparsity; the only design that survives strict local masking).
-3. **The hierarchy is causal.** Ablating top sparse coefficients hurts **3–7×** more than random ones, and their influence is **3–55×** concentrated in the right receptive field.
-4. **Chaining needs "re-grounding."** A naive learned chain collapses (compounding error); training *through* a re-grounding step recovers **0.70** vs the **0.712** causal upper bound. Re-grounding is the key mechanism.
-5. **Features are clean** (0–6% duplicates, 1–3% dead, distinct atoms). **Negative result:** the hard Q3→Q4 transition is a representation gap, *not* fixed by a bigger predictor.
+## What the analysis currently says
 
----
+Artifact-backed positives:
 
-## Repository layout
+- The `FieldSAE` winner remains highly compressive across the main CIFAR families.
+- The Phase 1 pareto sweep preserves the same basic story and keeps `Q3` as the persistent bottleneck.
+- In the chain experiments, full-BPTT re-grounding reaches `0.7010` against a `0.7122` hybrid upper bound, and rollout-aligned raw chaining reaches `0.6821`.
+- The changed-suite follow-ups added real signal instead of noise: fair RF budgeting rescues the RF-local branch, patch overlap helps, and coarse disjoint tilings are a genuine negative result.
+- The ViT transfer artifact is one of the cleanest results in the repo: at about `5%` retained it achieves `pred_agree = 0.9440` on Imagenette validation.
 
-```
+Important interpretation caveat:
+
+- The playbook audit found a confirmed repeated test-exposure pattern across the core CIFAR SAE, transition, and chain trainers. Those scripts evaluate on the test split during training and development, which is compatible with the narrow goal of mimicking the frozen CNN on this benchmark.
+- the CIFAR top-1 numbers should be read as test-exposed benchmark-mimic measurements, not as untouched held-out generalization estimates.
+- The cleanest families in the current repo state are the PCA baseline and the ViT transfer path. Some post-hoc analyses are marked `suspected` rather than `clean` because they inherit upstream SAE validity risk.
+
+For the exact audit trail, see:
+
+- [`analysis/leak_audit.json`](analysis/leak_audit.json)
+- [`analysis/deviations.json`](analysis/deviations.json)
+- [`analysis/outcomes.json`](analysis/outcomes.json)
+- [`analysis/verification.md`](analysis/verification.md)
+
+## Repository map
+
+```text
 HIGH_DIM_PROJ/
-├── env.sh                      # source before any GPU run (project-local cuDNN fix)
-├── src/
-│   ├── backbone.py             # CIFAR ResNet-20/56/110 + exact tap/splice helpers
-│   ├── data.py                 # CIFAR-10/100 loaders
-│   ├── sae.py                  # FieldSAE (Type A) + VectorSAE (Type B)
-│   ├── masks.py                # global TopK + receptive-field-local TopK
-│   ├── cache_activations.py    # dump frozen activations + norm stats
-│   ├── train_sae.py            # layerwise SAE trainer (curriculum, controls)
-│   ├── controls.py             # PCA baseline
-│   ├── eval.py                 # recon / downstream-preservation / sparsity metrics
-│   ├── transitions.py          # transition predictor + N4 frozen-block hybrid
-│   ├── train_transition.py     # Phase-3 Family-I transition trainer
-│   ├── train_chain.py          # Phase-3b chain trainer (scheduled-sampling + BPTT re-grounding)
-│   ├── eval_chain.py           # chained Q1→Q5 eval (raw / re-mask / re-ground / hybrid)
-│   ├── intervene.py            # N8 parent→child causal intervention
-│   ├── feature_audit.py        # dead/duplicate/atom analysis + top-activating images
-│   ├── taxonomy.py             # sparse-code vs dense transcoder vs crosscoder
-│   └── vit_sae.py              # ViT (timm) transfer on Imagenette
-├── scripts/
-│   ├── train_backbone.py       # train + freeze a backbone
-│   ├── run_grid.py             # multi-GPU experiment grids (phase1/phase2/pareto/seeds/r20c10)
-│   ├── run_phase3.sh           # Phase-3 transitions
-│   ├── run_tier_rest_01.sh     # remaining tier experiments (GPUs 0,1)
-│   ├── make_plots.py           # core report figures (1–6)
-│   ├── make_plots_tiers.py     # tier figures (7–9)
-│   └── make_sae_vs_cnn.py      # SAE-vs-CNN + sparsity figures (10–13, CPU-only)
-├── runs/                       # backbones, activation caches, per-run result.json, checkpoints
-├── logs/                       # collated logs + result files
-├── docs/
-│   ├── superpowers/specs/2026-05-31-sparse-field-sae-design.md   # design spec
-│   └── PHASE{1,2,3,3b}_RESULTS.md                                 # per-phase notes
-└── report/                     # REPORT.md / .pdf, plots/, figures_pdf/, all_figures.pdf
+├── analysis/                  # current synthesized analysis package and PDF
+├── docs/                      # per-phase result writeups and design material
+├── report/                    # archived manuscript-era report assets
+├── runs/                      # checkpoints, cached activations, per-run result files
+├── logs/                      # launcher logs and collated JSON outputs
+├── scripts/                   # experiment launchers and older plotting helpers
+├── src/                       # model, training, eval, intervention, and audit code
+├── data/                      # local dataset tarballs
+└── env.sh                     # required environment setup for GPU runs
 ```
 
----
+Important codepaths:
 
-## Method in one paragraph
+- [`src/train_sae.py`](src/train_sae.py), [`src/train_sae_changed.py`](src/train_sae_changed.py): layerwise SAE training
+- [`src/train_transition.py`](src/train_transition.py): adjacent sparse-code transitions
+- [`src/train_chain.py`](src/train_chain.py), [`src/train_chain_changed.py`](src/train_chain_changed.py): chain-aware training
+- [`src/intervene.py`](src/intervene.py), [`src/feature_audit.py`](src/feature_audit.py), [`src/taxonomy.py`](src/taxonomy.py): follow-up analyses
+- [`src/vit_sae.py`](src/vit_sae.py): ViT transfer artifact
+- [`analysis/scripts/build_playbook_analysis.py`](analysis/scripts/build_playbook_analysis.py): rebuild the analysis package
 
-At 5 depths `Q1…Q5` of the frozen CNN we train a small SAE that maps the activation field `H (C×H×W)` to an overcomplete coefficient field `Z (K×H×W, K=8C)`. A **mask** keeps only the top few % of coefficients (global, or receptive-field-local); the decoder reconstructs `Ĥ`. We splice `Ĥ` back into the frozen network and measure accuracy/KL vs the original. For the hierarchy, a predictor maps the masked code at one layer to the next, chained to the classifier; the **frozen-block hybrid** (decode → real frozen block → re-encode) is the causal upper bound.
+## Rebuild the analysis package
 
----
-
-## Reproduce
+If you want the current report rather than the archived manuscript, rebuild `analysis/` directly:
 
 ```bash
-source env.sh                                                   # REQUIRED: cuDNN fix (see Environment)
+source env.sh
+python analysis/scripts/build_playbook_analysis.py
+```
+
+That script regenerates:
+
+- the experiment registry and repo inventory
+- intent, deviation, leakage, and outcome manifests
+- `analysis/results_tidy.csv`
+- vector figures under `analysis/figures/`
+- [`analysis/report.tex`](analysis/report.tex) and [`analysis/report.pdf`](analysis/report.pdf)
+
+## Reproduce core experiment flow
+
+The main historical run flow is still:
+
+```bash
+source env.sh
 python scripts/train_backbone.py --arch resnet56 --dataset cifar100 --out runs/backbone_r56_c100
-python src/cache_activations.py  --ckpt runs/backbone_r56_c100/best.pt --out runs/acts_r56_c100
-python src/controls.py                                          # PCA baseline
-python scripts/run_grid.py --phase phase1                       # Phase 1: anchor (Vector+global)
-python scripts/run_grid.py --phase phase2                       # Phase 2: Field SAE, RF-local mask
-bash   scripts/run_phase3.sh                                    # Phase 3: transitions
-python src/eval_chain.py                                        # chain variants
-python src/train_chain.py --bptt                                # Phase 3b: architectural re-grounding
-python src/intervene.py                                         # N8 causal intervention
+python src/cache_activations.py --ckpt runs/backbone_r56_c100/best.pt --out runs/acts_r56_c100
+python src/controls.py
+python scripts/run_grid.py --phase phase1
+python scripts/run_grid.py --phase phase2
+bash scripts/run_phase3.sh
+python src/train_chain.py --bptt
+python src/intervene.py
 python src/feature_audit.py --section Q5 --sae runs/phase2/E1_Q5_f0.05/sae.pt
-python scripts/make_plots.py && python scripts/make_plots_tiers.py && python scripts/make_sae_vs_cnn.py
 ```
 
-Regenerate the report PDF:
+For later extension families, the surviving launcher entrypoint is usually:
+
 ```bash
-cd report && pandoc REPORT.md -o REPORT.pdf --pdf-engine=xelatex --toc -V geometry:margin=0.9in
+source env.sh
+bash scripts/run_tier_rest_01.sh
 ```
 
----
+## Environment notes
 
-## Status & how to resume
+- Always `source env.sh` before GPU work. The repo relies on a project-local cuDNN preload to avoid the host CUDA/cuDNN mismatch described in the historical notes.
+- The analysis build itself is CPU-friendly, but compiling [`analysis/report.pdf`](analysis/report.pdf) requires a working LaTeX install with `pdflatex`.
 
-**Done:** core PoC (Phases 0–3b), Tier 1 (N8, re-grounding, Q3→Q4), Tier 2 (Pareto sweep, feature audit), ResNet-110 backbone.
+## Reading guide
 
-**Pending a node reboot:** R20/CIFAR-10 recon + multi-seed stability, transcoder taxonomy, ResNet-110 recon, ViT-on-Imagenette. These were interrupted by a GPU hardware fault (see Environment). Resume with:
-```bash
-source env.sh && bash scripts/run_tier_rest_01.sh        # runs remaining items on GPUs 0,1
-```
+If you are new to the repo, the fastest accurate path is:
 
----
-
-## Environment notes (this box)
-
-- **cuDNN fix (required):** the global env has a mismatched CUDA-13 cuDNN that breaks the cu128 torch wheel (`CUDNN_STATUS_NOT_INITIALIZED`). `env.sh` preloads a project-local cu12 cuDNN (`.cudnn12/`) — **always `source env.sh` before any GPU run.** The global environment is left untouched.
-- **GPU fault:** during the tier runs, GPU index 2 hit Xid 154 ("Node Reboot Required"), which poisons CUDA init for all *new* processes node-wide (`torch.cuda.is_available()` becomes False, even with `CUDA_VISIBLE_DEVICES`). A host reboot clears it; until then no new GPU jobs can start.
-- Hardware: 4× Quadro RTX 6000 (24 GB), torch 2.10+cu128.
-```
+1. Read [`analysis/report.pdf`](analysis/report.pdf).
+2. Check [`analysis/open_questions.md`](analysis/open_questions.md) and [`analysis/missing_runs.md`](analysis/missing_runs.md).
+3. Use the phase docs in [`docs/`](docs/) only for per-family narrative detail.
+4. Treat [`report/REPORT.pdf`](report/REPORT.pdf) as archived context, not the current reconciled conclusion.

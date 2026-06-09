@@ -1,0 +1,475 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.9in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{array}
+\title{CNN-SAE analysis report}
+\author{Codex playbook analysis pass}
+\date{2026-06-08}
+\begin{document}
+\maketitle
+\tableofcontents
+\section{Executive summary}
+This analysis pass treats code and run artifacts as primary evidence and writes all new outputs under analysis/. The strongest artifact-backed positives are: the FieldSAE winner remains highly compressive, the Q3 retained-fraction bottleneck persists in the pareto sweep, full-BPTT re-grounded chaining reaches 0.7010 against a 0.7122 hybrid bound, raw-only rollout-aligned retraining reaches 0.6821, and the ViT transfer artifact attains 0.9440 prediction agreement.
+
+
+The most important caveat is a confirmed repeated-test-exposure pattern across the CIFAR training families: core training scripts evaluate on the test split every epoch. That does not undercut the narrow benchmark-mimic claim, but it does mean the reported CIFAR top-1 values are test-exposed model-selection results rather than untouched held-out generalization estimates.
+
+
+\section{Experiment catalog}
+\begin{longtable}{p{0.21\linewidth}p{0.15\linewidth}p{0.18\linewidth}p{0.36\linewidth}}
+\toprule
+Experiment & Stage & Parallel group & Purpose \\
+\midrule
+\endhead
+phase1\_anchor & Phase 1 & section x retained\_fraction & Anchor reconstruction with VectorSAE plus global masking. \\
+phase1\_random\_baseline & Phase 1 & selected section x retained\_fraction & Random-dictionary sanity checks against the trained SAE anchor. \\
+phase1\_pca\_baseline & Phase 1 & section x PCA rank & Linear PCA baseline at matched or larger coefficient budgets. \\
+phase1\_pareto & Phase 1 addendum & section x retained\_fraction & Fine retained-fraction sweep on the FieldSAE winner. \\
+phase2\_grid & Phase 2 & cell x section x mask\_budget & Branch grid over Field/Vector SAE and global/RF masking. \\
+phase3\_transitions & Phase 3 & adjacent section transition & Family I adjacent sparse-code transitions and frozen-block hybrid bound. \\
+phase3\_q3q4\_strong\_retry & Phase 3 addendum & single focused retry & Capacity-scaled retry of the Q3 to Q4 transition bottleneck. \\
+phase3b\_chain & Phase 3b & epoch progression & Chain-aware scheduled-sampling training with re-grounding. \\
+phase3b\_bptt & Phase 3b addendum & epoch progression & Full-BPTT chain-aware training through differentiable re-grounding. \\
+phase2\_rf\_fair\_changed & Phase 3b changed & section x retained\_fraction & Fair-budget RF-local masking rerun. \\
+phase3b\_raw\_only\_changed & Phase 3b changed & epoch progression & Rollout-aligned raw-carrier chain retraining without re-grounding. \\
+phase1\_patch\_overlap\_changed & Phase 3b changed & section x patch\_multiplier x retained\_fraction & Overlapping patchwise SAE retry. \\
+phase1\_patch\_depth\_changed & Phase 3b changed & section x depth\_schedule x retained\_fraction & Depth-aware overlapping patchwise SAE sweep. \\
+phase1\_patch\_disjoint\_changed & Phase 3b changed & section x patch\_multiplier & Disjoint patchwise SAE sweep. \\
+phase4\_r20c10 & Phase 4 & section x retained\_fraction & ResNet-20 on CIFAR-10 transfer grid for the winner recipe. \\
+phase4\_seeds & Phase 4 & section x seed & Seed-stability grid on the ResNet-56 / CIFAR-100 winner setup. \\
+phase4\_taxonomy & Phase 4 & representation condition & Transition taxonomy comparing sparse, dense, and cross carriers. \\
+phase4\_r110 & Phase 4 & section & ResNet-110 reconstruction sweep on CIFAR-100. \\
+phase4\_vit\_transfer & Phase 4 & single ViT transfer artifact & FieldSAE transfer to a pretrained ViT block on Imagenette. \\
+tier1\_intervention & Tier 1 follow-up & adjacent section transition & Parent-to-child intervention audit of importance and locality. \\
+tier2\_feature\_audit & Tier 2 follow-up & section & Dictionary dead-feature and duplicate-feature audit. \\
+\bottomrule
+\end{longtable}
+\section{Per-experiment notes}
+\subsection{phase1\_anchor}
+Purpose and hypothesis: A sparse transform-domain code can reconstruct each section and preserve downstream behavior.
+
+
+Designed method: VectorSAE with global TopK masking over cached ResNet-56 / CIFAR-100 activations.
+
+
+Designed procedure: Train one SAE per section over fractions 2, 5, and 10 percent.
+
+
+Declared success criteria: Beat random and PCA baselines while staying within roughly 1 percentage point of original top-1.
+
+
+Outcome classification: Success (as hoped). Strong reconstruction and downstream preservation across sections. The CIFAR top-1 values should be read as benchmark-mimic measurements rather than untouched held-out generalization estimates.
+
+
+\subsection{phase1\_random\_baseline}
+Purpose and hypothesis: The anchor result should not be reproducible with an untrained dictionary.
+
+
+Designed method: Freeze a random SAE dictionary and evaluate the same splice metrics.
+
+
+Designed procedure: Run selected random-baseline cells on the anchor sections.
+
+
+Declared success criteria: Random baseline should collapse toward chance.
+
+
+Outcome classification: Success (as hoped). Random dictionary runs collapse toward chance, matching the intended sanity check.
+
+
+\subsection{phase1\_pca\_baseline}
+Purpose and hypothesis: A learned sparse transform should outperform linear PCA at similar budget.
+
+
+Designed method: Per-section PCA over normalized cached activations.
+
+
+Designed procedure: Evaluate several ranks on the cached test activations.
+
+
+Declared success criteria: PCA should underperform the learned SAE at matched-or-larger budget.
+
+
+Outcome classification: Success (as hoped). PCA trails the learned SAE across the reported sections.
+
+
+\subsection{phase1\_pareto}
+Purpose and hypothesis: The FieldSAE winner has a clear retained-fraction knee and a persistent Q3 bottleneck.
+
+
+Designed method: FieldSAE with global masking over fractions 1, 2, 3, 5, 8, 12, and 20 percent.
+
+
+Designed procedure: Sweep all sections on the same backbone with one final metric per cell.
+
+
+Declared success criteria: Recover monotone sparsity-fidelity curves and identify the operational sweet spot.
+
+
+Outcome classification: Success (as hoped). Recovered monotone sparsity-fidelity curves with Q3 as the persistent late-budget bottleneck.
+
+
+\subsection{phase2\_grid}
+Purpose and hypothesis: An expressive FieldSAE should beat the VectorSAE, especially at aggressive sparsity and under RF-local masking.
+
+
+Designed method: Grid over Field versus Vector and Global versus RF masking.
+
+
+Designed procedure: Evaluate all planned section and budget combinations for the three surviving cells.
+
+
+Declared success criteria: Identify a clear winner architecture for the hierarchy stages.
+
+
+Outcome classification: Success (as hoped). FieldSAE clearly dominates the VectorSAE on the aggressive-sparsity and RF-local branches.
+
+
+\subsection{phase3\_transitions}
+Purpose and hypothesis: Sparse code at one section can generate the next section, and the frozen-block hybrid should upper-bound learned transitions.
+
+
+Designed method: Train adjacent transition predictors between independent SAEs.
+
+
+Designed procedure: Train four adjacent predictors and compare learned splice accuracy against the hybrid bound.
+
+
+Declared success criteria: Strong single-step transitions and an informative hybrid-vs-learned gap.
+
+
+Outcome classification: Success (as hoped). Single-step transitions work, and the hybrid upper bound shows strong causal sufficiency. The CIFAR top-1 values should be read as benchmark-mimic measurements rather than untouched held-out generalization estimates.
+
+
+\subsection{phase3\_q3q4\_strong\_retry}
+Purpose and hypothesis: The hard Q3 to Q4 step may yield to a larger predictor.
+
+
+Designed method: Retry the Q3 to Q4 transition with a deeper and wider predictor.
+
+
+Designed procedure: Train one focused retry for the bottleneck edge.
+
+
+Declared success criteria: Close the gap between learned and hybrid Q3 to Q4 performance.
+
+
+Outcome classification: Undesirable result. The larger predictor makes the Q3 to Q4 edge worse, not better.
+
+
+\subsection{phase3b\_chain}
+Purpose and hypothesis: Scheduled sampling on re-grounded predicted inputs should stabilize the learned chain.
+
+
+Designed method: Chain-aware training over the four adjacent predictors.
+
+
+Designed procedure: Warm-start from Phase 3 and track chain metrics through training.
+
+
+Declared success criteria: Lift the re-grounded chain above the Family I baseline.
+
+
+Outcome classification: Success (as hoped). Chain-aware training lifts the re-grounded chain well above the Family I baseline.
+
+
+\subsection{phase3b\_bptt}
+Purpose and hypothesis: Training through differentiable re-grounding should narrow the gap to the hybrid upper bound.
+
+
+Designed method: Full BPTT through the chain with in-graph re-grounding.
+
+
+Designed procedure: Repeat the chain-aware training with --bptt enabled.
+
+
+Declared success criteria: Push the re-grounded chain closer to the hybrid chain than the original Phase 3b run.
+
+
+Outcome classification: Success (as hoped). Full BPTT closes most of the gap to the hybrid chain.
+
+
+\subsection{phase2\_rf\_fair\_changed}
+Purpose and hypothesis: The earlier RF-local story may have been distorted by unfair budgeting.
+
+
+Designed method: Changed trainer with fair per-window RF fraction accounting.
+
+
+Designed procedure: Run all sections at 2, 5, and 10 percent.
+
+
+Declared success criteria: Show whether RF-locality remains viable under fair budgeting.
+
+
+Outcome classification: Success (unexpected). Fair RF budgeting rescues a branch that earlier looked much weaker.
+
+
+\subsection{phase3b\_raw\_only\_changed}
+Purpose and hypothesis: Raw chaining may be recoverable if the model is trained on its own rollout distribution.
+
+
+Designed method: Raw-carrier chain training with scheduled sampling, BPTT, and clipping.
+
+
+Designed procedure: Train one chain variant without re-grounding in the carrier path.
+
+
+Declared success criteria: Move the raw chain well above chance.
+
+
+Outcome classification: Success (unexpected). Rollout-aligned retraining recovers a strong raw chain instead of chance collapse.
+
+
+\subsection{phase1\_patch\_overlap\_changed}
+Purpose and hypothesis: The old VectorSAE baseline failed partly because it lacked local spatial context.
+
+
+Designed method: Patchwise overlapping sparse coding with several patch multipliers.
+
+
+Designed procedure: Sweep sections, fractions, and patch multipliers.
+
+
+Declared success criteria: Recover stronger low-budget performance than the pointwise vector baseline.
+
+
+Outcome classification: Success (unexpected). Patchwise overlap materially improves over the pointwise vector baseline.
+
+
+\subsection{phase1\_patch\_depth\_changed}
+Purpose and hypothesis: Patch size should shrink with depth instead of staying uniformly large.
+
+
+Designed method: Depth-aware overlapping patch schedules.
+
+
+Designed procedure: Sweep schedules a-d over sections and fractions.
+
+
+Declared success criteria: Find a better schedule than uniform large patches.
+
+
+Outcome classification: Success (unexpected). Depth-aware schedules complete cleanly and broadly support the small-context story.
+
+
+\subsection{phase1\_patch\_disjoint\_changed}
+Purpose and hypothesis: Disjoint tilings may behave differently from overlapping patch scans.
+
+
+Designed method: Disjoint patchwise sparse coding at a single retained fraction over several patch scales.
+
+
+Designed procedure: Run all sections at 5 percent for four patch multipliers.
+
+
+Declared success criteria: Determine whether non-overlapping patches are competitive with overlap.
+
+
+Outcome classification: Undesirable result. Coarse disjoint tilings fail badly; only the smallest disjoint scale remains competitive.
+
+
+\subsection{phase4\_r20c10}
+Purpose and hypothesis: The winner recipe should survive a smaller backbone and dataset shift.
+
+
+Designed method: FieldSAE with global masking on ResNet-20 / CIFAR-10.
+
+
+Designed procedure: Run all sections at 2, 5, and 10 percent.
+
+
+Declared success criteria: Preserve near-original top-1 across sections on the new backbone/dataset.
+
+
+Outcome classification: Success (as hoped). The winner recipe survives the ResNet-20 / CIFAR-10 transfer grid.
+
+
+\subsection{phase4\_seeds}
+Purpose and hypothesis: The winner story should not be a single-seed accident.
+
+
+Designed method: Repeat the winner SAE setup across seeds 0, 1, and 2.
+
+
+Designed procedure: Train all five sections at 5 percent across the three seeds.
+
+
+Declared success criteria: Low enough variance that the qualitative story survives.
+
+
+Outcome classification: Success (as hoped). Seed variation is small enough that the qualitative story survives.
+
+
+\subsection{phase4\_taxonomy}
+Purpose and hypothesis: Sparse code is the strongest transition carrier among sparse, dense, and cross alternatives.
+
+
+Designed method: Controlled Q4 to Q5 comparison across three representation families.
+
+
+Designed procedure: Measure downstream preservation, prediction agreement, and KL for each condition.
+
+
+Declared success criteria: Sparse should dominate the alternative carriers.
+
+
+Outcome classification: Success (as hoped). Sparse is the best transition carrier among the tested alternatives.
+
+
+\subsection{phase4\_r110}
+Purpose and hypothesis: The winner recipe should transfer to a deeper CNN.
+
+
+Designed method: FieldSAE global masking on ResNet-110 / CIFAR-100 at 5 percent.
+
+
+Designed procedure: Run all five sections once.
+
+
+Declared success criteria: Preserve near-original accuracy and recover the same bottleneck pattern.
+
+
+Outcome classification: Success (as hoped). The winner recipe transfers to a deeper CNN and preserves the Q3 bottleneck pattern.
+
+
+\subsection{phase4\_vit\_transfer}
+Purpose and hypothesis: The FieldSAE path should transfer to a ViT token grid.
+
+
+Designed method: FieldSAE over block-level ViT patch tokens on Imagenette.
+
+
+Designed procedure: Train on Imagenette train split and evaluate self-consistency on val.
+
+
+Declared success criteria: High prediction agreement and low KL at sparse retained fraction.
+
+
+Outcome classification: Success (as hoped). The ViT transfer artifact achieves high prediction agreement with low KL at 5 percent retained.
+
+
+\subsection{tier1\_intervention}
+Purpose and hypothesis: Sparse parents should be causally important and spatially localized for their children.
+
+
+Designed method: Importance and locality intervention metrics across adjacent transitions.
+
+
+Designed procedure: Ablate top versus random parents and compare localized child responses.
+
+
+Declared success criteria: Large importance ratios and strong locality concentration.
+
+
+Outcome classification: Success (as hoped). Interventions show strong importance and locality concentration, though they inherit upstream SAE validity risks.
+
+
+\subsection{tier2\_feature\_audit}
+Purpose and hypothesis: The learned dictionary should be healthy rather than dead or duplicated.
+
+
+Designed method: Audit dead features, duplicate features, and mean atom cosine.
+
+
+Designed procedure: Run the audit on representative mid and deep sections.
+
+
+Declared success criteria: Low dead-feature and duplicate-feature fractions.
+
+
+Outcome classification: Success (as hoped). Dead-feature and duplicate-feature rates are low in the audited sections.
+
+
+\section{Cross-experiment analysis}
+Across the reconstruction families, the clearest retained-fraction knee appears in the FieldSAE pareto sweep. Q3 reaches 0.7186 at 12 percent retained, while most other sections flatten much earlier.
+
+
+Across the chain families, re-grounding remains the strongest general mechanism. The scheduled-sampling Phase 3b chain reaches 0.6624, the BPTT variant reaches 0.7010, and the raw-only changed run reaches 0.6821 on its raw carrier path.
+
+
+Phase 4 strengthens the transfer story materially. The cleanest surviving split discipline is the ViT artifact, where prediction agreement reaches 0.9440 on the Imagenette val split.
+
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\linewidth]{figures/figure\_phase1\_pareto.pdf}
+\caption{Phase 1 reconstruction curves. The anchor VectorSAE needs more budget on early sections, while the FieldSAE pareto sweep reaches its useful regime by roughly 3 to 8 percent on most sections. Interpret CIFAR top-1 values with caution because the training scripts repeatedly evaluate on the test split.}
+\end{figure}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\linewidth]{figures/figure\_phase2\_grid.pdf}
+\caption{Phase 2 branch grid. FieldSAE dominates the aggressive-sparsity branch, and RF-local masking is only viable with the expressive FieldSAE. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.}
+\end{figure}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\linewidth]{figures/figure\_phase3\_chain\_and\_edges.pdf}
+\caption{Hierarchy-focused figures. Re-grounded chain training improves steadily, especially with full BPTT, while Q3 to Q4 remains the weakest single-step transition. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.}
+\end{figure}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\linewidth]{figures/figure\_changed\_patch\_suites.pdf}
+\caption{Changed-suite patch sweeps. Overlap helps, depth-aware schedules are broadly consistent with the small-context story, and coarse disjoint tilings fail badly. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.}
+\end{figure}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\linewidth]{figures/figure\_phase4\_extensions.pdf}
+\caption{Phase 4 extensions. The CIFAR transfer and seed figures strengthen the winner-path story but should be read as benchmark-mimic measurements because the test split was repeatedly monitored during training. The ViT prediction-agreement marker comes from the cleanest surviving split discipline in the repo.}
+\end{figure}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\linewidth]{figures/figure\_intervention\_and\_audit.pdf}
+\caption{Tier follow-up audits. The intervention ratios are large and the audited dictionaries have low dead-feature and duplicate-feature rates. These analyses inherit upstream CIFAR training validity risks because they depend on previously trained SAEs.}
+\end{figure}
+\section{Flags and risks}
+\begin{itemize}
+\item Material deviation: This is a confirmed repeated-test-exposure issue. It does not negate the narrow objective of mimicking the frozen CNN on this benchmark, but it does remove any untouched final holdout for broader generalization claims.
+\item Benign deviation: This is a documentation lag rather than a code-path mismatch.
+\item Benign deviation: Another documentation lag, but important because it changes the patchwise conclusion.
+\item Benign deviation: The artifact parses cleanly, but the launcher metadata is inconsistent.
+\end{itemize}
+\section{What worked / what we hoped for}
+\begin{itemize}
+\item phase1\_anchor: Strong reconstruction and downstream preservation across sections. The CIFAR top-1 values should be read as benchmark-mimic measurements rather than untouched held-out generalization estimates.
+\item phase1\_random\_baseline: Random dictionary runs collapse toward chance, matching the intended sanity check.
+\item phase1\_pca\_baseline: PCA trails the learned SAE across the reported sections.
+\item phase1\_pareto: Recovered monotone sparsity-fidelity curves with Q3 as the persistent late-budget bottleneck.
+\item phase2\_grid: FieldSAE clearly dominates the VectorSAE on the aggressive-sparsity and RF-local branches.
+\item phase3\_transitions: Single-step transitions work, and the hybrid upper bound shows strong causal sufficiency. The CIFAR top-1 values should be read as benchmark-mimic measurements rather than untouched held-out generalization estimates.
+\item phase3b\_chain: Chain-aware training lifts the re-grounded chain well above the Family I baseline.
+\item phase3b\_bptt: Full BPTT closes most of the gap to the hybrid chain.
+\item phase2\_rf\_fair\_changed: Fair RF budgeting rescues a branch that earlier looked much weaker.
+\item phase3b\_raw\_only\_changed: Rollout-aligned retraining recovers a strong raw chain instead of chance collapse.
+\item phase1\_patch\_overlap\_changed: Patchwise overlap materially improves over the pointwise vector baseline.
+\item phase1\_patch\_depth\_changed: Depth-aware schedules complete cleanly and broadly support the small-context story.
+\item phase4\_r20c10: The winner recipe survives the ResNet-20 / CIFAR-10 transfer grid.
+\item phase4\_seeds: Seed variation is small enough that the qualitative story survives.
+\item phase4\_taxonomy: Sparse is the best transition carrier among the tested alternatives.
+\item phase4\_r110: The winner recipe transfers to a deeper CNN and preserves the Q3 bottleneck pattern.
+\item phase4\_vit\_transfer: The ViT transfer artifact achieves high prediction agreement with low KL at 5 percent retained.
+\item tier1\_intervention: Interventions show strong importance and locality concentration, though they inherit upstream SAE validity risks.
+\item tier2\_feature\_audit: Dead-feature and duplicate-feature rates are low in the audited sections.
+\end{itemize}
+\section{What still should be run}
+\begin{itemize}
+\item A validation-first rerun of the CIFAR families that removes repeated test-set evaluation from training loops, if clean held-out generalization claims are needed.
+\item A regenerated Family I chain artifact that stores raw, re-mask, and re-ground chain variants as standalone verified outputs instead of embedded report values.
+\item If broader generalization or publication-quality claims are needed, reserve a fresh held-out split or a fully untouched test set for final scoring.
+\end{itemize}
+\section{Next steps}
+\begin{enumerate}
+\item If we want broader held-out generalization claims, remove test-set evaluation from the SAE, transition, and chain training loops, and rerun the headline CIFAR grids against a clean validation split.
+\item Keep the FieldSAE winner and the re-grounded chain path as the main line; do not spend more time on coarse disjoint patches or simple larger Q3-to-Q4 predictors.
+\item Use the ViT path as the cleanest transfer scaffold, because its surviving artifact does not show the same split-discipline problem.
+\end{enumerate}
+\section{Appendix}
+Primary leakage evidence: src/train\_sae.py:77-78,110-117; src/train\_sae\_changed.py:143-148,196-205; src/train\_transition.py:71-72,87-92; src/train\_chain.py:61-63,101-105.
+
+
+Split-hygiene evidence: src/data.py:18-30; src/cache\_activations.py:37-45,57-60; src/vit\_sae.py:65-72,79-81,96-112.
+
+
+\end{document}

@@ -1,0 +1,177 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue}
+\setstretch{1.12}
+
+\title{Sparse Signal-Field SAE Project: Research Report on Planned vs Executed Experiments}
+\author{Technical Project Report}
+\date{June 1, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This report explains what the project planned to run, what was actually implemented and executed, and what the resulting evidence supports. The original design was an eight-cell matrix that crossed training protocol, SAE architecture, and mask type. Execution completed the full Family I matrix (E1--E4), then focused on winner-path hierarchy experiments and chain stabilization. Family II was therefore executed partially in modified form, not as full E5--E8 matrix coverage. Quantitative results show strong sparse reconstruction sufficiency and strong causal upper-bound performance, while raw multi-step learned chains collapse unless each step is re-grounded on the SAE manifold. This document is written as a research report with explicit terminology, method statements, execution accounting, and result interpretation.
+\end{abstract}
+
+\section{Objective and Reporting Scope}
+The reporting objective is to give a technically precise account of the current project state without requiring the reader to infer missing context from code files. The report addresses four concrete questions. The first question is experiment coverage: which of E1--E8 were actually executed. The second question is implementation drift: what changed between the high-level design and the real code path. The third question is execution summary: what experiments were run in practice after those changes. The fourth question is numerical evidence: what the recorded outputs show.
+
+All statements are tied to artifacts in \texttt{Vision\_Sparsity/CNN-SAE}, including the high-level design document, source files, run directories, and result JSON logs. The key planning artifact is \texttt{high-level/sparse\_signal\_sae\_experiment\_plan\_high\_accuracy\_conv.tex} with matching PDF. The main implementation artifacts are in \texttt{src/} and \texttt{scripts/}. The main execution artifacts are in \texttt{runs/} and \texttt{logs/}.
+
+\section{Terminology and Experimental Matrix}
+The project uses five tapped sections of a frozen CNN, denoted Q1 through Q5. At each section, an SAE maps activation field $H \in \mathbb{R}^{C\times H\times W}$ to sparse coefficient field $Z \in \mathbb{R}^{K\times H\times W}$, masking is applied in coefficient space, and a decoder reconstructs $\hat{H}$ for downstream evaluation through the frozen model tail.
+
+The planned matrix in the high-level document is defined by three binary factors. The first factor is training protocol. Family I means independent layerwise SAE training followed by learned transitions between frozen code spaces. Family II means incremental dependent sparse-code learning. The second factor is SAE type: Field SAE versus Vector SAE. The third factor is mask type: global TopK versus receptive-field-local TopK.
+
+This yields eight planned experiments:
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+ID & Protocol & SAE type & Mask type \\
+\midrule
+E1 & Family I & Field & Global \\
+E2 & Family I & Field & RF-local \\
+E3 & Family I & Vector & Global \\
+E4 & Family I & Vector & RF-local \\
+E5 & Family II & Field & Global \\
+E6 & Family II & Field & RF-local \\
+E7 & Family II & Vector & Global \\
+E8 & Family II & Vector & RF-local \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Implemented System and Method Changes}
+The executed codebase implemented both SAE families and both mask families, then developed an additional chain-stability mechanism that became central to later results. In \texttt{src/sae.py}, Field SAE is implemented as a spatially expressive local-residual convolutional encoder/decoder, while Vector SAE is implemented as shared per-location 1x1 mappings with decoder normalization. In \texttt{src/masks.py}, global TopK and RF-local TopK are both implemented with hard masking.
+
+The training workflow in \texttt{src/train\_sae.py} uses a staged curriculum (warmup, sparsity anneal, fixed budget), which is a concrete implementation refinement relative to a naive fixed-sparsity start. Transition training is implemented in \texttt{src/train\_transition.py} and \texttt{src/transitions.py}. The same transition module also implements the frozen-block hybrid operator, which uses real frozen backbone blocks between decoded and re-encoded sparse states to measure a causal upper bound independent of learned transition error.
+
+The most important implementation change relative to the original matrix intent appears in chain handling. \texttt{src/eval\_chain.py} evaluates raw chaining, remasked chaining, re-grounded chaining, and hybrid chaining. \texttt{src/train\_chain.py} implements chain-aware training with scheduled sampling and optional BPTT through re-grounding. This is a real protocol extension, but it is applied on the selected winner configuration rather than as full E5--E8 matrix breadth.
+
+\section{Execution Accounting: What Was Actually Run}
+Execution records show full run coverage for E1 through E4 and no directory-level matrix completion for E5 through E8. The artifact pattern is explicit in \texttt{runs/phase1} and \texttt{runs/phase2}: E3 appears in phase1, and E1/E2/E4 appear in phase2 across Q1--Q5. Corresponding result files exist for those cells.
+
+For Family II, no full E5--E8 matrix directories exist. However, phase3b artifacts exist and are substantive. Specifically, \texttt{runs/phase3b/result.json} and \texttt{runs/phase3b\_bptt/result.json} show chain-aware training runs on frozen winner SAEs with scheduled sampling and re-grounding. Therefore, Family II-style mechanism work was executed, but matrix breadth was not completed.
+
+The correct accounting statement is therefore two-dimensional. Breadth across planned Family II configuration cells is incomplete (1 of 4 configurations executed in Family II-style form, approximately 25\% breadth coverage). Depth along that one executed winner configuration is substantial because the full Q1$\rightarrow$Q5 chain is trained and evaluated.
+
+\section{Chronological Execution Summary}
+Phase 1 established the anchor condition using E3 (Vector, global, independent). This phase answered the feasibility question and included controls such as random-dictionary SAE runs and PCA baselines. Phase 2 branched to E1, E2, and E4 to compare architecture and masking effects under matched section coverage. Phase 3 trained Family I adjacent transitions on winner SAEs and evaluated chain behavior under multiple rollout modes. Phase 3b introduced chain-aware training with scheduled sampling and re-grounding, then extended this with BPTT through re-grounding.
+
+Additional tier experiments were executed for intervention and feature-quality diagnostics. \texttt{runs/intervene\_result.json} and \texttt{runs/audit/audit\_Q3.json}, \texttt{runs/audit/audit\_Q5.json} are present and complete. A later cluster rerun wave then completed the previously blocked extension set: taxonomy (\texttt{runs/taxonomy/taxonomy\_q4q5.json}), ViT transfer (\texttt{runs/vit\_sae/vit\_result.json}), the R20/C10 fraction grid (\texttt{runs/r20c10/grid\_summary.json}), the seed-stability grid (\texttt{runs/seeds/grid\_summary.json}), and the ResNet-110 reconstruction sweep (\texttt{runs/r110/F\_Q1} through \texttt{runs/r110/F\_Q5}). The current artifact record therefore contains both the earlier failed attempts in launcher logs and the later successful reruns that supersede them.
+
+One later changed follow-up also updates the interpretation of Phase 3b. A rollout-aligned raw-carrier retraining run completed successfully in \texttt{runs/phase3b\_raw\_only\_changed/result.json} and showed that raw chaining is not inherently doomed once the predictor is trained directly under its own rollout conditions. This does not overturn the practical value of re-grounding, but it softens the earlier stronger claim that repeated manifold projection was strictly necessary.
+
+\section{Results}
+\subsection{Backbone and Reconstruction Baselines}
+The frozen ResNet-56/CIFAR-100 reference is 71.83\% top-1. This value appears in \texttt{logs/backbone\_r56\_c100\_\_done.json}. Under sparse reconstruction conditions, E1 and E3 comparison at 2\% retained shows that Field+Global is materially stronger than Vector+Global in early sections, while differences narrow in deeper sections.
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Section & E1 (Field+Global, 2\%) & E3 (Vector+Global, 2\%) \\
+\midrule
+Q1 & 0.7139 & 0.6376 \\
+Q2 & 0.7164 & 0.6327 \\
+Q3 & 0.7078 & 0.6646 \\
+Q4 & 0.7106 & 0.7098 \\
+Q5 & 0.7147 & 0.7123 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+RF-local comparisons at \texttt{k\_rf=4} show Field+RF remains viable while Vector+RF degrades sharply in several sections.
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Section & E2 (Field+RF, k=4) & E4 (Vector+RF, k=4) \\
+\midrule
+Q1 & 0.7158 & 0.6858 \\
+Q2 & 0.6992 & 0.4645 \\
+Q3 & 0.6698 & 0.2430 \\
+Q4 & 0.6949 & 0.5942 \\
+Q5 & 0.6443 & 0.2504 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Transition and Chain Results}
+Family I adjacent transitions in \texttt{runs/phase3/T\_*} show strong one-step performance on easier edges and a pronounced Q3$\rightarrow$Q4 gap.
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Transition & Learned top-1 & Hybrid top-1 \\
+\midrule
+Q1$\rightarrow$Q2 & 0.7146 & 0.7151 \\
+Q2$\rightarrow$Q3 & 0.6907 & 0.7105 \\
+Q3$\rightarrow$Q4 & 0.6504 & 0.7113 \\
+Q4$\rightarrow$Q5 & 0.7089 & 0.7149 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Chain rollout in \texttt{runs/phase3/chain\_result.json} separates information sufficiency from learned-chain stability. Raw learned chain is 0.0116, remasked chain is 0.2126, re-grounded chain is 0.5930, and hybrid chain is 0.7122 versus original 0.7183. This indicates that sparse support is information-sufficient under real frozen propagation but unstable under naive recursive learned-code propagation.
+
+\subsection{Phase 3b Family II-style Results}
+Phase3b scheduled-sampling run gives re-grounded chain top-1 of 0.6624 with hybrid 0.7122. Phase3b BPTT variant gives re-grounded chain top-1 of 0.7010 with hybrid still 0.7122. Raw chain remains near chance in both phase3b variants. These outcomes support the interpretation that manifold re-grounding is the key mechanism for stable multi-step sparse-code composition.
+
+\subsection{Phase 3b changed: raw-carrier retraining without re-grounding}
+The changed Phase 3b rerun directly tested whether the previous raw-chain collapse was an unavoidable property of the representation, or whether it partly reflected a rollout mismatch between training and evaluation. In this version, the predictor was trained on raw predicted carriers rather than on a re-grounded carrier path, while keeping scheduled sampling, full-chain BPTT, gradient clipping, and the usual per-step reconstruction/code losses.
+
+This run completed successfully and produced a clear change in behavior. The raw chain started near chance (0.0123 at epoch 0) but climbed to a final 0.6821. Evaluating the same trained model with re-grounding gave 0.6339, while the hybrid path remained strongest at 0.7120. The main conclusion is that direct rollout-aligned retraining recovers most of the raw-chain collapse. Thus, re-grounding remains an effective stabilizer but is no longer the only viable mechanism supported by the artifact record.
+
+\subsection{Causal and Feature-Quality Diagnostics}
+Intervention results show top-vs-random ablation impact ratios above one with large margins on most edges, including approximately 3.29x and 7.5x in reported pairs, with locality concentration above null area baselines. Feature audits report low dead-feature and duplicate rates at Q3 and Q5. These diagnostics support that the sparse representation is structured and nontrivial rather than degenerate.
+
+\subsection{Phase 4 Cluster Reruns and Extension Results}
+The later cluster reruns are best understood as scale, robustness, and transfer checks on the winner path rather than as replacements for the earlier mechanistic story. Each of these runs asks a distinct question.
+
+The R20/C10 grid reruns the winner-style Field+Global SAE setup on a different backbone/dataset pair, ResNet-20 on CIFAR-10, across Q1--Q5 and retained fractions 2\%, 5\%, and 10\%. All 15 cells completed successfully. The deep sections were especially strong: Q3 reached 0.9203, 0.9210, and 0.9228 spliced top-1 at 2\%, 5\%, and 10\%; Q4 reached 0.9224, 0.9227, and 0.9225; Q5 reached 0.9228, 0.9226, and 0.9228. The interpretation is that the basic sparse-sufficiency phenomenon is not fragile to this backbone/dataset change and saturates early, with little gain beyond 5\% retained in the deepest sections.
+
+The seed grid reruns the core ResNet-56/CIFAR-100 winner configuration at 5\% retained across seeds 0, 1, and 2 for every section. All 15 cells completed successfully. The main value of this experiment is robustness accounting. Q3 gave 0.7108, 0.7142, and 0.7136 spliced top-1; Q4 gave 0.7184, 0.7182, and 0.7151; Q5 gave 0.7174, 0.7167, and 0.7165. Thus the late-stage winner claims are not single-seed artifacts: variation exists, but it is small enough that the qualitative ordering and practical conclusions remain unchanged.
+
+The taxonomy run probes what kind of inter-section mapping matters at Q4$\rightarrow$Q5 by comparing sparse, dense, and cross conditions. The sparse condition achieved 0.7063 spliced top-1, dense achieved 0.6902, and cross achieved 0.6099. This matters because it strengthens the argument that the sparse code is not merely a compressed surrogate for a dense hidden state; it is the most behavior-preserving carrier among the tested transition representations in this controlled comparison.
+
+The ResNet-110 reconstruction sweep extends the winner recipe to a deeper backbone. All five section runs completed successfully. Spliced top-1 values were 0.7316 at Q1, 0.7311 at Q2, 0.7226 at Q3, 0.7290 at Q4, and 0.7318 at Q5. The pattern mirrors the earlier project logic rather than contradicting it: Q3 remains the hardest section, but the overall sparse reconstruction story survives the deeper model.
+
+The optional ViT transfer run also eventually succeeded after earlier dependency failures. Its final artifact reports prediction agreement 0.9440, KL 0.0427, retained fraction 0.0500, relative $\ell_2$ 0.4172, and cosine similarity 0.9085. This is not as mature a transfer story as the CNN path, but it is enough to say that the codepath moved from ``implemented but blocked'' to ``executed with a real artifact and nontrivial fidelity.''
+
+\subsection{Changed RF and patchwise follow-ups}
+The changed follow-up suite also sharpened two supporting interpretations. First, the fair-budget receptive-field rerun completed successfully across all 15 planned cells and reached a best top-1 of about 0.7173, showing that receptive-field locality remains competitive when the retained-code budget is normalized fairly within each RF window. This weakens any earlier claim that locality itself was the main reason RF-style masking lagged.
+
+Second, the patchwise SAE retries clarified the old vector-coder failure mode. The overlapping patchwise sweep completed across all 45 planned cells and showed that the strongest settings were usually the smallest CNN-filter-based patches rather than larger ones, especially in earlier quarters. The depth-aware patch sweep produced only a partial artifact set (25 cells present rather than the full planned sweep), with early evidence favoring the less aggressive schedule that stays near the base filter size. The disjoint-patch experiment does not currently have an output directory in the repo, so it should be treated as not yet executed in the artifact record rather than as a negative result.
+
+\section{Family I vs Family II: Correct Final Interpretation}
+The final interpretation must separate matrix completion from mechanism execution. E1 through E4 were fully executed as planned matrix cells. E5 through E8 were not executed as full matrix cells. At the same time, Family II-style training was executed in modified form on the winner configuration through phase3b and phase3b\_bptt. Therefore, the project did run Family II-style methods, but did not complete planned Family II breadth.
+
+This interpretation avoids two opposite errors. The first error is claiming ``Family II was not run,'' which conflicts with phase3b artifacts. The second error is claiming ``Family II was fully run,'' which conflicts with missing E6--E8 breadth and absence of full E5--E8 matrix outputs.
+
+\section{Limitations and Pending Work}
+The main scientific limitation is incomplete Family II breadth. The main operational limitation is no longer total blockage of the tier extension set, but uneven maturity across extensions. The cluster reruns converted the previously blocked R20/C10, seed-stability, taxonomy, ResNet-110 reconstruction, and ViT transfer campaigns into completed artifacts. What remains limited is not whether they ran, but how broadly they cover the original experimental matrix and how deeply they were replicated beyond the winner path.
+
+These limitations constrain claim scope. Strong claims are justified for executed winner-path mechanisms, Family I matrix outcomes, the changed raw-carrier retraining result, and the completed extension runs named above. Broad claims over all planned Family II architecture/mask combinations are still not justified, the changed patchwise follow-up suite is incomplete, and the transfer story beyond the CNN winner path is still much thinner than the core reconstruction and chain evidence.
+
+\section{Conclusion}
+This project established strong evidence that frozen CNN activations are sparse-compressible in a learned transform domain with high downstream fidelity at low retained fractions. It further established that naive learned sparse-code chains are unstable under recursive rollout, while re-grounding and chain-aware training recover most of the gap to a causal upper bound defined by frozen-block hybrid propagation.
+
+The changed Phase 3b rerun makes that conclusion more precise. Transition stabilization can come from explicit manifold projection, from rollout-aligned retraining, or from a combination of both. In the current artifact record, hybrid/re-grounded paths still win operationally, but the raw-chain failure story is no longer absolute.
+
+The implementation record is therefore coherent but not matrix-complete: Family I matrix coverage is complete, Family II-style mechanism coverage is substantial on one winner path, and full Family II matrix breadth remains future work. This is the accurate research-state summary supported by the current artifact set.
+
+\section*{Artifact Trace}
+Primary files for verification are \texttt{high-level/sparse\_signal\_sae\_experiment\_plan\_high\_accuracy\_conv.tex}, \texttt{scripts/run\_grid.py}, \texttt{src/train\_transition.py}, \texttt{src/eval\_chain.py}, \texttt{src/train\_chain.py}, \texttt{runs/phase1}, \texttt{runs/phase2}, \texttt{runs/phase3}, \texttt{runs/phase3b}, \texttt{runs/phase3b\_bptt}, \texttt{runs/phase3b\_raw\_only\_changed/result.json}, \texttt{runs/phase2\_rf\_fair\_changed}, \texttt{runs/phase1\_patch\_overlap\_changed}, \texttt{runs/phase1\_patch\_depth\_changed}, \texttt{runs/intervene\_result.json}, \texttt{runs/audit/audit\_Q3.json}, \texttt{runs/audit/audit\_Q5.json}, \texttt{runs/r20c10/grid\_summary.json}, \texttt{runs/seeds/grid\_summary.json}, \texttt{runs/taxonomy/taxonomy\_q4q5.json}, \texttt{runs/r110}, \texttt{runs/vit\_sae/vit\_result.json}, and \texttt{logs/baselines\_pca.json}.
+
+\end{document}

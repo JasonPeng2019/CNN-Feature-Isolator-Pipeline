@@ -1,0 +1,128 @@
+{
+  "phase1_anchor": {
+    "hypothesis": "A sparse transform-domain code can reconstruct each section and preserve downstream behavior.",
+    "designed_method": "VectorSAE with global TopK masking over cached ResNet-56 / CIFAR-100 activations.",
+    "designed_procedure": "Train one SAE per section over fractions 2, 5, and 10 percent.",
+    "declared_success_criteria": "Beat random and PCA baselines while staying within roughly 1 percentage point of original top-1."
+  },
+  "phase1_random_baseline": {
+    "hypothesis": "The anchor result should not be reproducible with an untrained dictionary.",
+    "designed_method": "Freeze a random SAE dictionary and evaluate the same splice metrics.",
+    "designed_procedure": "Run selected random-baseline cells on the anchor sections.",
+    "declared_success_criteria": "Random baseline should collapse toward chance."
+  },
+  "phase1_pca_baseline": {
+    "hypothesis": "A learned sparse transform should outperform linear PCA at similar budget.",
+    "designed_method": "Per-section PCA over normalized cached activations.",
+    "designed_procedure": "Evaluate several ranks on the cached test activations.",
+    "declared_success_criteria": "PCA should underperform the learned SAE at matched-or-larger budget."
+  },
+  "phase1_pareto": {
+    "hypothesis": "The FieldSAE winner has a clear retained-fraction knee and a persistent Q3 bottleneck.",
+    "designed_method": "FieldSAE with global masking over fractions 1, 2, 3, 5, 8, 12, and 20 percent.",
+    "designed_procedure": "Sweep all sections on the same backbone with one final metric per cell.",
+    "declared_success_criteria": "Recover monotone sparsity-fidelity curves and identify the operational sweet spot."
+  },
+  "phase2_grid": {
+    "hypothesis": "An expressive FieldSAE should beat the VectorSAE, especially at aggressive sparsity and under RF-local masking.",
+    "designed_method": "Grid over Field versus Vector and Global versus RF masking.",
+    "designed_procedure": "Evaluate all planned section and budget combinations for the three surviving cells.",
+    "declared_success_criteria": "Identify a clear winner architecture for the hierarchy stages."
+  },
+  "phase3_transitions": {
+    "hypothesis": "Sparse code at one section can generate the next section, and the frozen-block hybrid should upper-bound learned transitions.",
+    "designed_method": "Train adjacent transition predictors between independent SAEs.",
+    "designed_procedure": "Train four adjacent predictors and compare learned splice accuracy against the hybrid bound.",
+    "declared_success_criteria": "Strong single-step transitions and an informative hybrid-vs-learned gap."
+  },
+  "phase3_q3q4_strong_retry": {
+    "hypothesis": "The hard Q3 to Q4 step may yield to a larger predictor.",
+    "designed_method": "Retry the Q3 to Q4 transition with a deeper and wider predictor.",
+    "designed_procedure": "Train one focused retry for the bottleneck edge.",
+    "declared_success_criteria": "Close the gap between learned and hybrid Q3 to Q4 performance."
+  },
+  "phase3b_chain": {
+    "hypothesis": "Scheduled sampling on re-grounded predicted inputs should stabilize the learned chain.",
+    "designed_method": "Chain-aware training over the four adjacent predictors.",
+    "designed_procedure": "Warm-start from Phase 3 and track chain metrics through training.",
+    "declared_success_criteria": "Lift the re-grounded chain above the Family I baseline."
+  },
+  "phase3b_bptt": {
+    "hypothesis": "Training through differentiable re-grounding should narrow the gap to the hybrid upper bound.",
+    "designed_method": "Full BPTT through the chain with in-graph re-grounding.",
+    "designed_procedure": "Repeat the chain-aware training with --bptt enabled.",
+    "declared_success_criteria": "Push the re-grounded chain closer to the hybrid chain than the original Phase 3b run."
+  },
+  "phase2_rf_fair_changed": {
+    "hypothesis": "The earlier RF-local story may have been distorted by unfair budgeting.",
+    "designed_method": "Changed trainer with fair per-window RF fraction accounting.",
+    "designed_procedure": "Run all sections at 2, 5, and 10 percent.",
+    "declared_success_criteria": "Show whether RF-locality remains viable under fair budgeting."
+  },
+  "phase3b_raw_only_changed": {
+    "hypothesis": "Raw chaining may be recoverable if the model is trained on its own rollout distribution.",
+    "designed_method": "Raw-carrier chain training with scheduled sampling, BPTT, and clipping.",
+    "designed_procedure": "Train one chain variant without re-grounding in the carrier path.",
+    "declared_success_criteria": "Move the raw chain well above chance."
+  },
+  "phase1_patch_overlap_changed": {
+    "hypothesis": "The old VectorSAE baseline failed partly because it lacked local spatial context.",
+    "designed_method": "Patchwise overlapping sparse coding with several patch multipliers.",
+    "designed_procedure": "Sweep sections, fractions, and patch multipliers.",
+    "declared_success_criteria": "Recover stronger low-budget performance than the pointwise vector baseline."
+  },
+  "phase1_patch_depth_changed": {
+    "hypothesis": "Patch size should shrink with depth instead of staying uniformly large.",
+    "designed_method": "Depth-aware overlapping patch schedules.",
+    "designed_procedure": "Sweep schedules a-d over sections and fractions.",
+    "declared_success_criteria": "Find a better schedule than uniform large patches."
+  },
+  "phase1_patch_disjoint_changed": {
+    "hypothesis": "Disjoint tilings may behave differently from overlapping patch scans.",
+    "designed_method": "Disjoint patchwise sparse coding at a single retained fraction over several patch scales.",
+    "designed_procedure": "Run all sections at 5 percent for four patch multipliers.",
+    "declared_success_criteria": "Determine whether non-overlapping patches are competitive with overlap."
+  },
+  "phase4_r20c10": {
+    "hypothesis": "The winner recipe should survive a smaller backbone and dataset shift.",
+    "designed_method": "FieldSAE with global masking on ResNet-20 / CIFAR-10.",
+    "designed_procedure": "Run all sections at 2, 5, and 10 percent.",
+    "declared_success_criteria": "Preserve near-original top-1 across sections on the new backbone/dataset."
+  },
+  "phase4_seeds": {
+    "hypothesis": "The winner story should not be a single-seed accident.",
+    "designed_method": "Repeat the winner SAE setup across seeds 0, 1, and 2.",
+    "designed_procedure": "Train all five sections at 5 percent across the three seeds.",
+    "declared_success_criteria": "Low enough variance that the qualitative story survives."
+  },
+  "phase4_taxonomy": {
+    "hypothesis": "Sparse code is the strongest transition carrier among sparse, dense, and cross alternatives.",
+    "designed_method": "Controlled Q4 to Q5 comparison across three representation families.",
+    "designed_procedure": "Measure downstream preservation, prediction agreement, and KL for each condition.",
+    "declared_success_criteria": "Sparse should dominate the alternative carriers."
+  },
+  "phase4_r110": {
+    "hypothesis": "The winner recipe should transfer to a deeper CNN.",
+    "designed_method": "FieldSAE global masking on ResNet-110 / CIFAR-100 at 5 percent.",
+    "designed_procedure": "Run all five sections once.",
+    "declared_success_criteria": "Preserve near-original accuracy and recover the same bottleneck pattern."
+  },
+  "phase4_vit_transfer": {
+    "hypothesis": "The FieldSAE path should transfer to a ViT token grid.",
+    "designed_method": "FieldSAE over block-level ViT patch tokens on Imagenette.",
+    "designed_procedure": "Train on Imagenette train split and evaluate self-consistency on val.",
+    "declared_success_criteria": "High prediction agreement and low KL at sparse retained fraction."
+  },
+  "tier1_intervention": {
+    "hypothesis": "Sparse parents should be causally important and spatially localized for their children.",
+    "designed_method": "Importance and locality intervention metrics across adjacent transitions.",
+    "designed_procedure": "Ablate top versus random parents and compare localized child responses.",
+    "declared_success_criteria": "Large importance ratios and strong locality concentration."
+  },
+  "tier2_feature_audit": {
+    "hypothesis": "The learned dictionary should be healthy rather than dead or duplicated.",
+    "designed_method": "Audit dead features, duplicate features, and mean atom cosine.",
+    "designed_procedure": "Run the audit on representative mid and deep sections.",
+    "declared_success_criteria": "Low dead-feature and duplicate-feature fractions."
+  }
+}

@@ -1,7 +1,0 @@
-{
-  "name": "taxonomy_q4q5",
-  "start": "2026-06-01T08:26:33Z",
-  "end": "2026-06-01T08:31:50Z",
-  "rc": 0,
-  "command": "python 'src/taxonomy.py' --device cuda:0 --out 'runs/taxonomy'"
-}

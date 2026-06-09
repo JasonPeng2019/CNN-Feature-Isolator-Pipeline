@@ -1,0 +1,48 @@
+[
+  {
+    "experiment_id": "all_cifar_training_families",
+    "severity": "material deviation",
+    "as_designed": "Evaluation should measure downstream preservation, ideally while preserving an untouched final holdout for any generalization claims.",
+    "as_implemented": "Core CIFAR training scripts evaluate on the cached test split every epoch.",
+    "evidence": [
+      "src/train_sae.py:77-78,110-117",
+      "src/train_sae_changed.py:143-148,196-205",
+      "src/train_transition.py:71-72,87-92",
+      "src/train_chain.py:61-63,101-105"
+    ],
+    "note": "This is a confirmed repeated-test-exposure issue. It does not negate the narrow objective of mimicking the frozen CNN on this benchmark, but it does remove any untouched final holdout for broader generalization claims."
+  },
+  {
+    "experiment_id": "phase1_patch_depth_changed",
+    "severity": "benign deviation",
+    "as_designed": "Earlier repo prose described the depth-aware sweep as partial.",
+    "as_implemented": "The surviving artifact tree contains 60 of 60 result files.",
+    "evidence": [
+      "runs/phase1_patch_depth_changed/grid_summary.json:1",
+      "docs/PHASE3b_changed_RESULTS.md:164-190"
+    ],
+    "note": "This is a documentation lag rather than a code-path mismatch."
+  },
+  {
+    "experiment_id": "phase1_patch_disjoint_changed",
+    "severity": "benign deviation",
+    "as_designed": "Earlier repo prose described the disjoint suite as absent.",
+    "as_implemented": "The surviving artifact tree contains 20 of 20 result files and a launcher summary with rc=0.",
+    "evidence": [
+      "LISP-Setup/LISP-3-Setup/logs/patch_disjoint_changed_summary.json:1",
+      "docs/PHASE3b_changed_RESULTS.md:196-219"
+    ],
+    "note": "Another documentation lag, but important because it changes the patchwise conclusion."
+  },
+  {
+    "experiment_id": "phase1_pareto",
+    "severity": "benign deviation",
+    "as_designed": "Launcher metadata should agree with run completion.",
+    "as_implemented": "One pareto job reports rc=-11 in the grid summary even though the result artifact exists.",
+    "evidence": [
+      "runs/pareto/grid_summary.json:1",
+      "runs/pareto/F_Q4_f0.12/result.json:1"
+    ],
+    "note": "The artifact parses cleanly, but the launcher metadata is inconsistent."
+  }
+]

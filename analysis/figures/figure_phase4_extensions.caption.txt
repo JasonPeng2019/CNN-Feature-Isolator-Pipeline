@@ -1,0 +1,1 @@
+Phase 4 extensions. The CIFAR transfer and seed figures strengthen the winner-path story but should be read as benchmark-mimic measurements because the test split was repeatedly monitored during training. The ViT prediction-agreement marker comes from the cleanest surviving split discipline in the repo.

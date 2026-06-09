@@ -1,0 +1,46 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\gdef \LT@i {\LT@entry 
+    {1}{113.68732pt}\LT@entry 
+    {1}{84.62852pt}\LT@entry 
+    {1}{99.15422pt}\LT@entry 
+    {1}{186.31584pt}}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Executive summary}{2}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}Experiment catalog}{2}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Per-experiment notes}{3}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}phase1\_anchor}{3}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}phase1\_random\_baseline}{3}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}phase1\_pca\_baseline}{3}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}phase1\_pareto}{4}{subsection.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}phase2\_grid}{4}{subsection.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}phase3\_transitions}{4}{subsection.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.7}phase3\_q3q4\_strong\_retry}{4}{subsection.3.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.8}phase3b\_chain}{4}{subsection.3.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.9}phase3b\_bptt}{5}{subsection.3.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.10}phase2\_rf\_fair\_changed}{5}{subsection.3.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.11}phase3b\_raw\_only\_changed}{5}{subsection.3.11}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.12}phase1\_patch\_overlap\_changed}{5}{subsection.3.12}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.13}phase1\_patch\_depth\_changed}{5}{subsection.3.13}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.14}phase1\_patch\_disjoint\_changed}{6}{subsection.3.14}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.15}phase4\_r20c10}{6}{subsection.3.15}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.16}phase4\_seeds}{6}{subsection.3.16}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.17}phase4\_taxonomy}{6}{subsection.3.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.18}phase4\_r110}{6}{subsection.3.18}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.19}phase4\_vit\_transfer}{7}{subsection.3.19}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.20}tier1\_intervention}{7}{subsection.3.20}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.21}tier2\_feature\_audit}{7}{subsection.3.21}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Cross-experiment analysis}{7}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Flags and risks}{7}{section.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Phase 1 reconstruction curves. The anchor VectorSAE needs more budget on early sections, while the FieldSAE pareto sweep reaches its useful regime by roughly 3 to 8 percent on most sections. Interpret CIFAR top-1 values with caution because the training scripts repeatedly evaluate on the test split.}}{8}{figure.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Phase 2 branch grid. FieldSAE dominates the aggressive-sparsity branch, and RF-local masking is only viable with the expressive FieldSAE. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.}}{8}{figure.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}What worked / what we hoped for}{8}{section.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Hierarchy-focused figures. Re-grounded chain training improves steadily, especially with full BPTT, while Q3 to Q4 remains the weakest single-step transition. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.}}{9}{figure.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Changed-suite patch sweeps. Overlap helps, depth-aware schedules are broadly consistent with the small-context story, and coarse disjoint tilings fail badly. CIFAR top-1 values here are benchmark-mimic measurements because the test split was repeatedly monitored during training.}}{9}{figure.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Phase 4 extensions. The CIFAR transfer and seed figures strengthen the winner-path story but should be read as benchmark-mimic measurements because the test split was repeatedly monitored during training. The ViT prediction-agreement marker comes from the cleanest surviving split discipline in the repo.}}{10}{figure.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}What still should be run}{10}{section.7}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Tier follow-up audits. The intervention ratios are large and the audited dictionaries have low dead-feature and duplicate-feature rates. These analyses inherit upstream CIFAR training validity risks because they depend on previously trained SAEs.}}{11}{figure.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Next steps}{11}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Appendix}{11}{section.9}\protected@file@percent }
+\gdef \@abspage@last{11}
