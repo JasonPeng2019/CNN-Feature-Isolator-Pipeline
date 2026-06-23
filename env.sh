@@ -5,3 +5,6 @@
 # cuDNN (9.10) that matches torch 2.10+cu128. Global env left untouched.
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export LD_LIBRARY_PATH="$HERE/.cudnn12/nvidia/cudnn/lib:$LD_LIBRARY_PATH"
+if [ -d "$HERE/.pydeps_min" ]; then
+  export PYTHONPATH="${PYTHONPATH:+$PYTHONPATH:}$HERE/.pydeps_min"
+fi

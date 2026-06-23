@@ -1,0 +1,1 @@
+Completed ViT-small sweep heatmaps over block and retained fraction. Mean prediction agreement, mean KL, seed-level agreement spread, and mean relative reconstruction error show a broad stable regime and a strong best region at later blocks and larger retained fractions.

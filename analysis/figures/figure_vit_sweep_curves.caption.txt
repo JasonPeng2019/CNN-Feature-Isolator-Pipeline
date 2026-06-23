@@ -1,0 +1,1 @@
+Completed ViT-small sweep curves. Mean metrics versus retained fraction, with agreement spread bands where applicable, show monotone improvement with larger budgets and identify block-specific sweet spots.

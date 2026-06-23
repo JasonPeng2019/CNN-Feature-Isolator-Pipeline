@@ -1,0 +1,1 @@
+Completed ViT-small sweep Pareto views. Each point is one block/fraction setting aggregated over three seeds. The best settings jointly achieve high prediction agreement and low KL / relative error rather than winning only one metric.

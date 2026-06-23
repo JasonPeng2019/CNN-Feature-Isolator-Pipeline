@@ -205,7 +205,67 @@ Few dead features, few/no duplicates, distinct atoms — the dictionary is healt
 
 ### Tier 3 — generality / scale-up
 
-**T3.1 — ResNet-110/CIFAR-100 backbone (COMPLETE): 73.25%** (deeper than the R56 base). SAE recon on it: *pending-reboot.* **ViT-on-Imagenette** transfer (timm `vit_small_patch16_224`, pipeline validated end-to-end): *pending-reboot.*
+**T3.1 — ResNet-110/CIFAR-100 backbone (COMPLETE): 73.25%** (deeper than the R56 base).
+
+**T3.2 — ViT-on-Imagenette transfer (COMPLETE).** The original single artifact at `block 6`, ~`5%` retained reached **0.944 prediction agreement** with **0.0427 KL** on Imagenette validation.
+
+**T3.3 — completed ViT-small sweep on Imagenette (COMPLETE).** We then expanded that one-off transfer artifact into a full sweep:
+
+- model: `vit_small_patch16_224`
+- blocks: `2, 4, 6, 8, 10`
+- retained fractions: `1%, 2%, 5%, 8%, 12%`
+- seeds: `0, 1, 2`
+- total jobs: `75`
+
+Every cell completed successfully (`75/75`). This matters because it upgrades the ViT result from “interesting artifact” to “stable experiment family.”
+
+![ViT sweep heatmaps](plots/fig14_vit_sweep_heatmaps.png)
+
+The heatmaps give the high-level picture:
+
+- **mean prediction agreement** is strong over a broad region, not a single isolated point
+- **KL** falls as the retained fraction increases
+- **seed std** stays small on the best settings, which is exactly what we want for a paper-robust claim
+- **relative reconstruction error** improves steadily with budget, but the best behavior-preserving settings are not determined by rel-L2 alone
+
+![ViT sweep curves](plots/fig15_vit_sweep_curves.png)
+
+The curves show several useful qualitative patterns:
+
+- average `pred_agree` improves almost monotonically as retained fraction grows
+- the best aggregate block is **block 10** (`0.9087` mean `pred_agree` across all fractions), but **block 4** is also unusually strong
+- blocks `6` and `8` underperform blocks `4` and `10`, suggesting that “deeper” alone is not the whole story
+
+![ViT sweep Pareto views](plots/fig16_vit_sweep_pareto.png)
+
+The Pareto plots make the main model-selection point clear: the strongest settings jointly achieve **high prediction agreement** and **low KL**, rather than winning on only one axis.
+
+![ViT sweep ranking](plots/fig17_vit_sweep_ranked.png)
+
+The best stable setting is:
+
+- **block `10`, retained fraction `12%`**
+- mean `pred_agree = 0.9307`
+- seed std `= 0.0034`
+- mean `KL = 0.0361`
+
+The strongest runner-up is:
+
+- **block `4`, retained fraction `8%`**
+- mean `pred_agree = 0.9273`
+- seed std `= 0.0038`
+- mean `KL = 0.0463`
+
+![ViT sweep aggregates](plots/fig18_vit_sweep_aggregates.png)
+
+Aggregating across blocks and fractions reinforces the same story:
+
+- by retained fraction: `1% → 0.8569`, `2% → 0.8827`, `5% → 0.8971`, `8% → 0.9075`, `12% → 0.9129`
+- by block: `2 → 0.8916`, `4 → 0.9024`, `6 → 0.8792`, `8 → 0.8752`, `10 → 0.9087`
+
+![ViT sweep seed traces](plots/fig19_vit_sweep_seed_traces.png)
+
+The per-seed traces show that the good settings are not just lucky winners. In particular, the top settings stay tightly clustered across all three seeds.
 
 ### Tier follow-up status
 
@@ -217,11 +277,15 @@ Few dead features, few/no duplicates, distinct atoms — the dictionary is healt
 | T2.2 Pareto sweep | ✅ done |
 | T2.3 feature audit | ✅ done |
 | T3.1 ResNet-110 backbone | ✅ done (73.25%) |
+| T3.2 single ViT transfer artifact | ✅ done (0.944 pred_agree at 5%) |
+| T3.3 full ViT-small sweep | ✅ done (75/75 jobs) |
 | T2.1 R20/C10 recon + multi-seed | ⏳ pending node reboot |
 | T2.4 transcoder taxonomy | ⏳ pending node reboot |
-| T3.1 R110 recon + ViT transfer | ⏳ pending node reboot |
+| T3.1 R110 recon | ⏳ pending node reboot |
 
-*Resume after reboot:* `source env.sh && bash scripts/run_tier_rest_01.sh` (runs the remaining items on GPUs 0,1).
+The ViT-small sweep is therefore **not a failed experiment**. It is a real positive result: the sparse token-grid reconstruction story survives a full sweep and produces stable winner settings, with later blocks and larger retained fractions doing best overall.
+
+*Resume after reboot:* `source env.sh && bash scripts/run_tier_rest_01.sh` (runs the remaining older pending items on GPUs 0,1).
 
 ---
 
@@ -238,6 +302,8 @@ bash   scripts/run_phase3.sh                             # Phase 3 transitions
 python src/eval_chain.py                                 # chain variants
 python src/train_chain.py                                # Phase 3b Family II
 python scripts/make_plots.py                             # regenerate figures
+python scripts/make_plots_tiers.py                       # regenerate tier figures
+python scripts/make_vit_sweep_figures.py                 # summarize completed ViT sweep
 ```
 
 Folder layout: `src/` (code), `scripts/` (drivers), `runs/` (checkpoints, caches, per-run `result.json`), `logs/` (collated logs + result files), `docs/` (per-phase result notes + design spec), `report/` (this report + `plots/`).

@@ -30,7 +30,7 @@ This is a scale-down and dataset-shift stress test of the winner recipe:
 - retained fractions: `2%`, `5%`, `10%`
 - SAE style: `Field + Global`
 
-### Completion
+### Completion:
 
 - `15/15` cells completed successfully
 
@@ -162,6 +162,65 @@ This is the first transformer-side transfer artifact:
 - The KL is low enough to suggest the full output distribution usually stays close as well.
 - This is not yet a full task-accuracy transfer story, but it is a real artifact and a nontrivial proof that the codepath works.
 
+## Experiment 6: ViT-Small Sweep on Imagenette (`vit_sweep`)
+
+### What it tested
+
+This is the first full transformer-side sweep rather than a single transfer artifact:
+
+- model: `vit_small_patch16_224`
+- blocks: `2, 4, 6, 8, 10`
+- retained fractions: `1%`, `2%`, `5%`, `8%`, `12%`
+- seeds: `0, 1, 2`
+- train subset: `2000` Imagenette train images per run
+- validation subset: `500` Imagenette val images per run
+
+### Completion
+
+- `75/75` jobs completed successfully
+- `75/75` `vit_result.json` files were recovered
+- no missing or duplicate `(block, frac, seed)` cells were found in the sweep
+
+### Headline results
+
+- Mean `pred_agree` across all `75` runs: `0.8914`
+- Mean `kl` across all `75` runs: `0.1082`
+- Best single run: `block=10`, retained fraction about `12%`, `seed=1`, `pred_agree = 0.9340`
+
+### Best stable settings (mean over 3 seeds)
+
+| Block | Retained | Mean Pred Agree | Seed Std | Mean KL | Mean Rel L2 |
+|---|---:|---:|---:|---:|---:|
+| 10 | 12% | 0.9307 | 0.0034 | 0.0361 | 0.3558 |
+| 4 | 8% | 0.9273 | 0.0038 | 0.0463 | 0.3814 |
+| 10 | 8% | 0.9187 | 0.0034 | 0.0456 | 0.4177 |
+| 4 | 12% | 0.9173 | 0.0050 | 0.0403 | 0.3188 |
+
+### Aggregate trends
+
+Mean `pred_agree` by block:
+
+- block `2`: `0.8916`
+- block `4`: `0.9024`
+- block `6`: `0.8792`
+- block `8`: `0.8752`
+- block `10`: `0.9087`
+
+Mean `pred_agree` by retained fraction:
+
+- `1%`: `0.8569`
+- `2%`: `0.8827`
+- `5%`: `0.8971`
+- `8%`: `0.9075`
+- `12%`: `0.9129`
+
+### Interpretation
+
+- The original ViT artifact was not a fluke: the sweep shows a broad region of stable, nontrivial self-consistency rather than a single lucky cell.
+- Later blocks are generally better than middle blocks, but the best regime is not simply “deeper is always better”; block `4` is unusually strong and competitive with block `10`.
+- Increasing retained fraction helps monotonically on average, with a clear improvement from `1%` to `8–12%`.
+- The most paper-robust current claim is therefore not “one ViT cell worked,” but that **ViT token-grid sparse reconstruction is stable across multiple blocks and seeds, with best settings sustaining about `0.93` prediction agreement on Imagenette validation.**
+
 ## Overall Phase 4 Takeaways
 
 Phase 4 substantially strengthens the whole project:
@@ -171,6 +230,7 @@ Phase 4 substantially strengthens the whole project:
 3. Sparse is not only reconstructive but also a particularly strong transition carrier (`taxonomy_q4q5`).
 4. The deeper-backbone story remains consistent, including the persistent `Q3` bottleneck (`r110`).
 5. The transfer path to ViTs moved from “blocked” to “real executed artifact” (`vit_sae`).
+6. The transformer-side path now has a completed sweep, and the completed sweep shows stable rather than seed-lucky behavior (`vit_sweep`).
 
 ## Bottom Line
 
