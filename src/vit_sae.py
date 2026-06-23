@@ -1,7 +1,7 @@
-"""T3b — transfer the Field SAE to a pretrained ViT on Imagenette (real ImageNet classes).
+"""T3b — transfer a sparse autoencoder to a pretrained ViT on Imagenette.
 
 Extract patch-token activations after a chosen transformer block, reshape the
-196 tokens to a 14x14 grid, train a Field SAE + global mask, then splice the
+196 tokens to a 14x14 grid, train an SAE + global mask, then splice the
 reconstructed tokens back and continue the ViT. Downstream metric = agreement /
 KL vs the ORIGINAL ViT prediction (self-consistency; no task labels needed).
 """
@@ -116,6 +116,7 @@ def main():
     ap.add_argument("--model", default="vit_small_patch16_224")
     ap.add_argument("--block", type=int, default=6)
     ap.add_argument("--frac", type=float, default=0.05)
+    ap.add_argument("--sae_type", default="field", choices=["field", "vector"])
     ap.add_argument("--Kmult", type=int, default=4)
     ap.add_argument("--epochs", type=int, default=20)
     ap.add_argument("--ntrain", type=int, default=2000)
@@ -162,7 +163,10 @@ def main():
     mean = gtr.mean(dim=(0, 2, 3), keepdim=True); std = gtr.std(dim=(0, 2, 3), keepdim=True).clamp_min(1e-6)
 
     K = args.Kmult * D
-    net = S.build_sae("field", D, K, d=2 * D, n_blocks=2).to(dev)
+    build_kwargs = {"n_blocks": 2}
+    if args.sae_type == "field":
+        build_kwargs["d"] = 2 * D
+    net = S.build_sae(args.sae_type, D, K, **build_kwargs).to(dev)
     opt = torch.optim.Adam(net.parameters(), args.lr)
     mask = lambda z: M.mask_global_frac(z, args.frac)
     idx = torch.randperm(gtr.shape[0], device=dev)
@@ -173,6 +177,8 @@ def main():
             z = net.encode(gn); zt, _ = mask(z); gh = net.decode(zt)
             loss = (gn - gh).pow(2).sum() / (gn.pow(2).sum() + 1e-8)
             opt.zero_grad(); loss.backward(); opt.step(); rl += loss.item()
+            if args.sae_type == "vector" and hasattr(net, "_normalize_decoder"):
+                net._normalize_decoder()
     # eval on val: recon + agreement/KL vs original ViT
     net.eval(); agg = {}; n = 0
     with torch.no_grad():
@@ -193,6 +199,7 @@ def main():
     res.update({
         "model": args.model,
         "block": args.block,
+        "sae_type": args.sae_type,
         "D": D,
         "K": K,
         "seed": args.seed,

@@ -12,7 +12,7 @@
 \maketitle
 \tableofcontents
 \section{Executive summary}
-This analysis pass treats code and run artifacts as primary evidence and writes all new outputs under analysis/. The strongest artifact-backed positives are: the FieldSAE winner remains highly compressive, the Q3 retained-fraction bottleneck persists in the pareto sweep, full-BPTT re-grounded chaining reaches 0.7010 against a 0.7122 hybrid bound, raw-only rollout-aligned retraining reaches 0.6821, the original ViT transfer artifact attains 0.9440 prediction agreement, and the completed 75-run ViT-small sweep recovers stable winner settings with mean prediction agreement up to 0.9307.
+This analysis pass treats code and run artifacts as primary evidence and writes all new outputs under analysis/. The strongest artifact-backed positives are: the FieldSAE winner remains highly compressive, the Q3 retained-fraction bottleneck persists in the pareto sweep, full-BPTT re-grounded chaining reaches 0.7010 against a 0.7122 hybrid bound, raw-only rollout-aligned retraining reaches 0.6821, the original ViT transfer artifact attains 0.9440 prediction agreement, the completed 75-run ViT-small sweep recovers stable winner settings with mean prediction agreement up to 0.9307, and the completed ViT-base sweep reaches a much stronger stable regime with mean prediction agreement up to 0.9851 at block 10 and 12 percent retained.
 
 
 The most important caveat is a confirmed repeated-test-exposure pattern across the CIFAR training families: core training scripts evaluate on the test split every epoch. That does not undercut the central mechanistic claim, because this project uses that split as an analysis corpus for probing how the frozen CNN executes. It does mean the reported CIFAR top-1 values are corpus-conditioned faithfulness measurements rather than untouched external evaluation numbers.
@@ -44,6 +44,7 @@ phase4\_taxonomy & Phase 4 & representation condition & Transition taxonomy comp
 phase4\_r110 & Phase 4 & section & ResNet-110 reconstruction sweep on CIFAR-100. \\
 phase4\_vit\_transfer & Phase 4 & single ViT transfer artifact & FieldSAE transfer to a pretrained ViT block on Imagenette. \\
 phase4\_vit\_sweep & Phase 4 addendum & block x retained\_fraction x seed & Completed ViT-small sweep on Imagenette over 75 cells. \\
+phase4\_vit\_base & Phase 4 addendum & block x retained\_fraction x seed & Completed ViT-base sweep on Imagenette over 60 cells. \\
 tier1\_intervention & Tier 1 follow-up & adjacent section transition & Parent-to-child intervention audit of importance and locality. \\
 tier2\_feature\_audit & Tier 2 follow-up & section & Dictionary dead-feature and duplicate-feature audit. \\
 \bottomrule
@@ -369,6 +370,22 @@ Declared success criteria: Recover a broad region of high prediction agreement w
 Outcome classification: Success (as hoped). All 75 cells complete successfully, the mean prediction agreement across the sweep is 0.8914, and the best stable setting reaches 0.9307 mean prediction agreement with 0.0034 seed std and 0.0361 mean KL.
 
 
+\subsection{phase4\_vit\_base}
+Purpose and hypothesis: The clean ViT transfer path should scale to a larger pretrained model while preserving a stable sparse reconstruction regime.
+
+
+Designed method: FieldSAE over ViT-base patch-token grids on Imagenette, sweeping blocks 2, 4, 6, 8, and 10; requested retained fractions 2, 5, 8, and 12 percent; and seeds 0, 1, and 2.
+
+
+Designed procedure: Run 60 total cells and summarize both stable winner settings and any seed-fragile failure regions.
+
+
+Declared success criteria: Recover a larger-model regime with near-perfect prediction agreement while keeping the sweep interpretable rather than hiding instability inside a single global average.
+
+
+Outcome classification: Success (unexpected). The larger model supports an extremely strong stable late-block regime, with the best stable setting reaching 0.9851 mean prediction agreement and 0.0012 seed std, but many mid-block cells become sharply bimodal across seeds and several collapse while retaining far less than their requested sparsity budget.
+
+
 \subsection{tier1\_intervention}
 Purpose and hypothesis: Sparse parents should be causally important and spatially localized for their children.
 
@@ -408,7 +425,7 @@ Across the reconstruction families, the clearest retained-fraction knee appears 
 Across the chain families, re-grounding remains the strongest general mechanism. The scheduled-sampling Phase 3b chain reaches 0.6624, the BPTT variant reaches 0.7010, and the raw-only changed run reaches 0.6821 on its raw carrier path.
 
 
-Phase 4 strengthens the transfer story materially. The cleanest surviving split discipline is the ViT family, where the original artifact reaches 0.9440 prediction agreement on the Imagenette val split and the completed 75-run sweep shows a broad stable regime with best mean prediction agreement 0.9307 at block 10 and 12 percent retained.
+Phase 4 strengthens the transfer story materially. The cleanest surviving split discipline is the ViT family, where the original artifact reaches 0.9440 prediction agreement on the Imagenette val split, the completed 75-run ViT-small sweep shows a broad stable regime with best mean prediction agreement 0.9307 at block 10 and 12 percent retained, and the completed ViT-base sweep shows that a larger model can reach 0.9851 mean prediction agreement in its stable regime while also exposing substantial off-regime seed fragility.
 
 
 \begin{figure}[ht]
@@ -453,6 +470,21 @@ Phase 4 strengthens the transfer story materially. The cleanest surviving split 
 \end{figure}
 \begin{figure}[ht]
 \centering
+\includegraphics[width=0.95\linewidth]{figures/fig20\_vit\_base\_heatmaps.pdf}
+\caption{Completed ViT-base sweep heatmaps. The larger model has an exceptionally strong stable regime at block 10, but several mid-block settings show high seed spread or outright collapse counts, so mean performance alone is not a sufficient summary.}
+\end{figure}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\linewidth]{figures/fig20\_vit\_base\_seed\_traces.pdf}
+\caption{Completed ViT-base sweep seed traces. Stable late-block settings stay tightly clustered across seeds, while multiple other settings bifurcate sharply into near-perfect and near-zero prediction-agreement outcomes.}
+\end{figure}
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.95\linewidth]{figures/fig20\_vit\_base\_fraction\_drift.pdf}
+\caption{Completed ViT-base requested-versus-realized sparsity diagnostics. Several collapse-prone seeds retain far less than the requested fraction, so the analysis groups settings by the requested fraction recovered from the run directory names rather than by rounded realized sparsity alone.}
+\end{figure}
+\begin{figure}[ht]
+\centering
 \includegraphics[width=0.95\linewidth]{figures/figure\_intervention\_and\_audit.pdf}
 \caption{Tier follow-up audits. The intervention ratios are large and the audited dictionaries have low dead-feature and duplicate-feature rates. These analyses inherit upstream CIFAR training validity risks because they depend on previously trained SAEs.}
 \end{figure}
@@ -483,6 +515,7 @@ Phase 4 strengthens the transfer story materially. The cleanest surviving split 
 \item phase4\_r110: The winner recipe transfers to a deeper CNN and preserves the Q3 bottleneck pattern.
 \item phase4\_vit\_transfer: The ViT transfer artifact achieves high prediction agreement with low KL at 5 percent retained.
 \item phase4\_vit\_sweep: The completed ViT-small sweep shows that the transformer-side result is stable across multiple blocks, sparsity budgets, and seeds, with a best stable setting at block 10 and 12 percent retained.
+\item phase4\_vit\_base: The completed ViT-base sweep shows a much stronger stable best-case regime than ViT-small, but also surfaces substantial seed-sensitive fragility outside the late block-10 regime.
 \item tier1\_intervention: Interventions show strong importance and locality concentration, though they inherit upstream SAE validity risks.
 \item tier2\_feature\_audit: Dead-feature and duplicate-feature rates are low in the audited sections.
 \end{itemize}
@@ -497,7 +530,7 @@ Phase 4 strengthens the transfer story materially. The cleanest surviving split 
 \item If we want an additional external-benchmarking layer, remove test-set evaluation from the SAE, transition, and chain training loops, and rerun the headline CIFAR grids against a clean validation split.
 \item Keep the FieldSAE winner and the re-grounded chain path as the main line; do not spend more time on coarse disjoint patches or simple larger Q3-to-Q4 predictors.
 \item Use the ViT path as the cleanest transfer scaffold, because its surviving artifact and completed sweep do not show the same split-discipline problem as the CIFAR training families.
-\item Prioritize feature-visualization and seed-universality follow-ups on the stable ViT winners before broadening the claim to still larger models or datasets.
+\item Prioritize feature-visualization and seed-universality follow-ups on the stable ViT winners, and separately diagnose the realized-versus-requested sparsity drift behind the fragile ViT-base cells before broadening the claim to still larger models or datasets.
 \end{enumerate}
 \section{Appendix}
 Primary leakage evidence: src/train\_sae.py:77-78,110-117; src/train\_sae\_changed.py:143-148,196-205; src/train\_transition.py:71-72,87-92; src/train\_chain.py:61-63,101-105.

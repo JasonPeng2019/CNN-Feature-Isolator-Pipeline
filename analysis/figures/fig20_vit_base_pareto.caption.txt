@@ -1,0 +1,1 @@
+Larger-model ViT Pareto views. Stable winners jointly achieve high prediction agreement and low KL, while collapse-prone settings stand out as weak tradeoffs rather than merely lower-ranked versions of the same pattern.

@@ -1,9 +1,8 @@
-"""Run larger-model / larger-dataset ViT SAE sweeps.
+"""Run a Phase 4 changed ViT family-comparison sweep.
 
-This launcher extends the small-scale ViT grid with:
-- multiple models
-- dataset kind / root / split controls
-- full-split support via ntrain/nval = -1
+This launcher is the clean "does vector beat field on token grids?" surface.
+It compares SAE families on the same ViT blocks / retained fractions / seeds
+and writes runs under `runs/phase4_changed/`.
 """
 import argparse
 import json
@@ -27,13 +26,16 @@ def slug_model(name):
 def make_jobs(args):
     jobs = []
     for model in parse_list(args.models, str):
+        model_tag = slug_model(model)
         for sae_type in parse_list(args.sae_types, str):
             for block in parse_list(args.blocks, int):
                 for frac in parse_list(args.fracs, float):
                     for seed in parse_list(args.seeds, int):
                         frac_tag = f"{frac:.4f}".rstrip("0").rstrip(".")
-                        model_tag = slug_model(model)
-                        out = os.path.join(args.out_root, f"{model_tag}_{sae_type}_b{block}_f{frac_tag}_s{seed}")
+                        out = os.path.join(
+                            args.out_root,
+                            f"{model_tag}_{sae_type}_b{block}_f{frac_tag}_s{seed}",
+                        )
                         jobs.append({
                             "dataset": args.dataset,
                             "dataset_root": args.dataset_root,
@@ -115,22 +117,22 @@ def main():
     ap.add_argument("--train_split", default="train")
     ap.add_argument("--val_split", default="val")
     ap.add_argument("--imagenette_size", default="160px")
-    ap.add_argument("--models", default="vit_small_patch16_224,vit_base_patch16_224")
-    ap.add_argument("--sae_types", default="field")
-    ap.add_argument("--blocks", default="2,4,6,8,10")
-    ap.add_argument("--fracs", default="0.02,0.05,0.08,0.12")
+    ap.add_argument("--models", default="vit_small_patch16_224")
+    ap.add_argument("--sae_types", default="field,vector")
+    ap.add_argument("--blocks", default="4,10")
+    ap.add_argument("--fracs", default="0.05,0.08,0.12")
     ap.add_argument("--seeds", default="0,1,2")
     ap.add_argument("--Kmult", type=int, default=4)
     ap.add_argument("--epochs", type=int, default=20)
-    ap.add_argument("--ntrain", type=int, default=-1)
-    ap.add_argument("--nval", type=int, default=-1)
-    ap.add_argument("--train_bs", type=int, default=16)
-    ap.add_argument("--val_bs", type=int, default=16)
+    ap.add_argument("--ntrain", type=int, default=2000)
+    ap.add_argument("--nval", type=int, default=500)
+    ap.add_argument("--train_bs", type=int, default=32)
+    ap.add_argument("--val_bs", type=int, default=32)
     ap.add_argument("--num_workers", type=int, default=4)
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--data_seed", type=int, default=0)
     ap.add_argument("--gpus", default="0,1,2,3")
-    ap.add_argument("--out_root", default=os.path.join(ROOT, "runs", "vit_scale_sweep"))
+    ap.add_argument("--out_root", default=os.path.join(ROOT, "runs", "phase4_changed"))
     args = ap.parse_args()
 
     os.makedirs(args.out_root, exist_ok=True)

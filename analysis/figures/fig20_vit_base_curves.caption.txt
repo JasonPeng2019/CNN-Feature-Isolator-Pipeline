@@ -1,0 +1,1 @@
+Larger-model ViT sweep curves. Requested retained fraction improves some settings strongly, but collapse behavior and realized-fraction drift make the story non-monotone outside the stable late-block regime.

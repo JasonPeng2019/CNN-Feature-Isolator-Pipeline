@@ -1,0 +1,1 @@
+Requested-versus-realized retained-fraction diagnostics for the larger-model ViT sweep. The analysis groups settings by requested fraction recovered from run directory names so that realized-fraction drift does not scramble the sweep.

@@ -1,0 +1,1 @@
+Larger-model ViT sweep heatmaps over requested block and retained fraction. Mean prediction agreement, mean KL, seed spread, and collapse count make visible both the strong late-block regime and the seed-fragile collapse regions.

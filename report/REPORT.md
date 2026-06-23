@@ -219,6 +219,8 @@ Few dead features, few/no duplicates, distinct atoms — the dictionary is healt
 
 Every cell completed successfully (`75/75`). This matters because it upgrades the ViT result from “interesting artifact” to “stable experiment family.”
 
+For this sweep, the meaningful maximum for `pred_agree` is `1.0000`, since the metric is exact agreement with the original ViT prediction on each validation example.
+
 ![ViT sweep heatmaps](plots/fig14_vit_sweep_heatmaps.png)
 
 The heatmaps give the high-level picture:
@@ -248,6 +250,8 @@ The best stable setting is:
 - mean `pred_agree = 0.9307`
 - seed std `= 0.0034`
 - mean `KL = 0.0361`
+- per-seed values `= 0.9260 / 0.9340 / 0.9320`
+- gap to meaningful max `= 0.0693`
 
 The strongest runner-up is:
 
@@ -261,11 +265,137 @@ The strongest runner-up is:
 Aggregating across blocks and fractions reinforces the same story:
 
 - by retained fraction: `1% → 0.8569`, `2% → 0.8827`, `5% → 0.8971`, `8% → 0.9075`, `12% → 0.9129`
+- by retained fraction gap to max: `1% → 0.1431`, `2% → 0.1173`, `5% → 0.1029`, `8% → 0.0925`, `12% → 0.0871`
 - by block: `2 → 0.8916`, `4 → 0.9024`, `6 → 0.8792`, `8 → 0.8752`, `10 → 0.9087`
+
+Full mean table for every `ViT-small` `(block, retained fraction)` combination:
+
+| Block | Retained | Mean Pred Agree | Seed Std | Mean KL |
+|---|---:|---:|---:|---:|
+| 2 | 1% | 0.8520 | 0.0150 | 0.2097 |
+| 2 | 2% | 0.8873 | 0.0100 | 0.1218 |
+| 2 | 5% | 0.8953 | 0.0077 | 0.0754 |
+| 2 | 8% | 0.9107 | 0.0118 | 0.0525 |
+| 2 | 12% | 0.9127 | 0.0034 | 0.0405 |
+| 4 | 1% | 0.8653 | 0.0090 | 0.1740 |
+| 4 | 2% | 0.8967 | 0.0050 | 0.1030 |
+| 4 | 5% | 0.9053 | 0.0025 | 0.0627 |
+| 4 | 8% | 0.9273 | 0.0038 | 0.0463 |
+| 4 | 12% | 0.9173 | 0.0050 | 0.0403 |
+| 6 | 1% | 0.8467 | 0.0127 | 0.2377 |
+| 6 | 2% | 0.8720 | 0.0071 | 0.1507 |
+| 6 | 5% | 0.8840 | 0.0085 | 0.0999 |
+| 6 | 8% | 0.8907 | 0.0066 | 0.0745 |
+| 6 | 12% | 0.9027 | 0.0025 | 0.0628 |
+| 8 | 1% | 0.8367 | 0.0050 | 0.3004 |
+| 8 | 2% | 0.8627 | 0.0050 | 0.1827 |
+| 8 | 5% | 0.8853 | 0.0075 | 0.1241 |
+| 8 | 8% | 0.8900 | 0.0000 | 0.0908 |
+| 8 | 12% | 0.9013 | 0.0082 | 0.0653 |
+| 10 | 1% | 0.8840 | 0.0049 | 0.1427 |
+| 10 | 2% | 0.8947 | 0.0082 | 0.1002 |
+| 10 | 5% | 0.9153 | 0.0109 | 0.0653 |
+| 10 | 8% | 0.9187 | 0.0034 | 0.0456 |
+| 10 | 12% | 0.9307 | 0.0034 | 0.0361 |
 
 ![ViT sweep seed traces](plots/fig19_vit_sweep_seed_traces.png)
 
 The per-seed traces show that the good settings are not just lucky winners. In particular, the top settings stay tightly clustered across all three seeds.
+
+**T3.4 — completed ViT-base sweep on Imagenette (COMPLETE).** We then analyzed the larger-model sweep under `runs/vit_base_imagenette_full/`:
+
+- model: `vit_base_patch16_224`
+- blocks: `2, 4, 6, 8, 10`
+- requested retained fractions: `2%, 5%, 8%, 12%`
+- seeds: `0, 1, 2`
+- total jobs: `60`
+
+Every requested cell completed successfully (`60/60`). The meaningful maximum for `pred_agree` is again `1.0000`, since the metric is exact agreement with the original ViT prediction on each validation example.
+
+![ViT-base heatmaps](plots/fig20_vit_base_heatmaps.png)
+
+The larger-model heatmaps show a more dramatic story than the ViT-small sweep:
+
+- **block 10** is an exceptionally strong stable regime
+- several mid-block settings suffer outright **seed-collapse**
+- seed variance and collapse count matter as much as the mean, because the raw sweep average is distorted by bimodal settings
+
+![ViT-base curves](plots/fig20_vit_base_curves.png)
+
+The curves make the instability visible:
+
+- requested fraction does **not** behave monotonically in the raw aggregate on this run family
+- the reason is not that higher budgets are intrinsically worse, but that some settings collapse on one or two seeds
+- block `10` remains strong across all requested fractions, while blocks `4`, `6`, and `8` are much more fragile
+
+![ViT-base Pareto views](plots/fig20_vit_base_pareto.png)
+
+The Pareto plots isolate the true winners from the collapse-prone cells. The best stable settings are:
+
+- **block `10`, requested `12%`**
+- mean `pred_agree = 0.9851`
+- seed std `= 0.0012`
+- mean `KL = 0.0063`
+- per-seed values `= 0.9857 / 0.9862 / 0.9834`
+- gap to meaningful max `= 0.0149`
+
+Strong runner-ups are:
+
+- **block `10`, requested `8%`** with mean `pred_agree = 0.9790`
+- **block `2`, requested `8%`** with mean `pred_agree = 0.9787`
+- **block `2`, requested `5%`** with mean `pred_agree = 0.9745`
+
+![ViT-base ranking](plots/fig20_vit_base_ranked.png)
+
+The ranking and instability summary show that the larger model is not simply "better everywhere." It is better in its stable regime, but much more brittle off-regime:
+
+- by block: `2 → 0.8101`, `4 → 0.3220`, `6 → 0.6306`, `8 → 0.5689`, `10 → 0.9714`
+- by requested fraction: `2% → 0.7009`, `5% → 0.7704`, `8% → 0.6572`, `12% → 0.5139`
+- collapse-prone requested settings: `12 / 20`
+
+![ViT-base seed traces](plots/fig20_vit_base_seed_traces.png)
+
+The seed traces are the key interpretive figure. They show a clear bimodal failure pattern in several settings, for example:
+
+- `block 4, 12%`: `0.9743 / 0.0000 / 0.0000`
+- `block 8, 12%`: `0.0166 / 0.9654 / 0.9676`
+- `block 2, 12%`: `0.9804 / 0.0000 / 0.0003`
+- `block 6, 8%`: `0.9661 / 0.9682 / 0.0025`
+
+![ViT-base fraction drift](plots/fig20_vit_base_fraction_drift.png)
+
+This is why the analysis groups by the **requested** retained fraction recovered from the run directory name rather than by rounding the realized `frac_retained` recorded in the JSON. Several collapse seeds retained far less than requested, for example:
+
+- requested `5%`, block `10`, one seed realized only about `2.78%`
+- requested `8%`, block `6`, one seed realized only about `2.99%`
+- requested `12%`, block `2`, one seed realized only about `3.36%`
+
+Full mean table for every `ViT-base` `(block, requested retained fraction)` combination:
+
+| Block | Requested Retained | Mean Pred Agree | Seed Std | Mean KL | Collapsed Seeds |
+|---|---:|---:|---:|---:|---:|
+| 2 | 2% | 0.9602 | 0.0026 | 0.0254 | 0 |
+| 2 | 5% | 0.9745 | 0.0006 | 0.0107 | 0 |
+| 2 | 8% | 0.9787 | 0.0014 | 0.0077 | 0 |
+| 2 | 12% | 0.3269 | 0.4621 | 4.1514 | 2 |
+| 4 | 2% | 0.3167 | 0.4470 | 3.8476 | 2 |
+| 4 | 5% | 0.3222 | 0.4544 | 3.8807 | 2 |
+| 4 | 8% | 0.3242 | 0.4584 | 4.1534 | 2 |
+| 4 | 12% | 0.3248 | 0.4593 | 3.9818 | 2 |
+| 6 | 2% | 0.6319 | 0.4468 | 1.8281 | 1 |
+| 6 | 5% | 0.9620 | 0.0015 | 0.0208 | 0 |
+| 6 | 8% | 0.6456 | 0.4547 | 1.8513 | 1 |
+| 6 | 12% | 0.2830 | 0.3975 | 3.6029 | 2 |
+| 8 | 2% | 0.6265 | 0.4365 | 1.6623 | 1 |
+| 8 | 5% | 0.6409 | 0.4393 | 1.5287 | 1 |
+| 8 | 8% | 0.3582 | 0.4292 | 2.8919 | 2 |
+| 8 | 12% | 0.6499 | 0.4478 | 1.7070 | 1 |
+| 10 | 2% | 0.9690 | 0.0015 | 0.0222 | 0 |
+| 10 | 5% | 0.9524 | 0.0355 | 0.0783 | 0 |
+| 10 | 8% | 0.9790 | 0.0023 | 0.0101 | 0 |
+| 10 | 12% | 0.9851 | 0.0012 | 0.0063 | 0 |
+
+The larger-model conclusion is therefore two-sided: `ViT-Base` reaches a much stronger stable best-case regime than `ViT-small`, but it also exposes a new fragility story. The paper-robust claim here is not "larger is uniformly better"; it is "larger ViTs can support extremely faithful sparse token-grid reconstructions at the right late blocks, while many other settings become sharply seed-sensitive and deserve separate diagnosis."
 
 ### Tier follow-up status
 
@@ -279,6 +409,7 @@ The per-seed traces show that the good settings are not just lucky winners. In p
 | T3.1 ResNet-110 backbone | ✅ done (73.25%) |
 | T3.2 single ViT transfer artifact | ✅ done (0.944 pred_agree at 5%) |
 | T3.3 full ViT-small sweep | ✅ done (75/75 jobs) |
+| T3.4 full ViT-base sweep | ✅ done (60/60 jobs) |
 | T2.1 R20/C10 recon + multi-seed | ⏳ pending node reboot |
 | T2.4 transcoder taxonomy | ⏳ pending node reboot |
 | T3.1 R110 recon | ⏳ pending node reboot |
@@ -304,6 +435,7 @@ python src/train_chain.py                                # Phase 3b Family II
 python scripts/make_plots.py                             # regenerate figures
 python scripts/make_plots_tiers.py                       # regenerate tier figures
 python scripts/make_vit_sweep_figures.py                 # summarize completed ViT sweep
+python scripts/make_vit_scale_figures.py --run-root runs/vit_base_imagenette_full --tag fig20_vit_base
 ```
 
 Folder layout: `src/` (code), `scripts/` (drivers), `runs/` (checkpoints, caches, per-run `result.json`), `logs/` (collated logs + result files), `docs/` (per-phase result notes + design spec), `report/` (this report + `plots/`).

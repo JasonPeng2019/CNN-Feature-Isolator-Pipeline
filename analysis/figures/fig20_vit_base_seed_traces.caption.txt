@@ -1,0 +1,1 @@
+Per-seed traces across requested settings for the larger-model ViT sweep. Good settings remain tightly clustered across seeds, whereas unstable settings bifurcate sharply into success and collapse outcomes.

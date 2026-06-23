@@ -24,27 +24,32 @@ def parse_float_list(text):
 
 def make_jobs(args):
     jobs = []
-    for block in parse_int_list(args.blocks):
-        for frac in parse_float_list(args.fracs):
-            for seed in parse_int_list(args.seeds):
-                frac_tag = f"{frac:.4f}".rstrip("0").rstrip(".")
-                out = os.path.join(args.out_root, f"b{block}_f{frac_tag}_s{seed}")
-                jobs.append({
-                    "model": args.model,
-                    "block": block,
-                    "frac": frac,
-                    "Kmult": args.Kmult,
-                    "epochs": args.epochs,
-                    "ntrain": args.ntrain,
-                    "nval": args.nval,
-                    "train_bs": args.train_bs,
-                    "val_bs": args.val_bs,
-                    "num_workers": args.num_workers,
-                    "lr": args.lr,
-                    "seed": seed,
-                    "data_seed": args.data_seed,
-                    "out": out,
-                })
+    for sae_type in args.sae_types.split(","):
+        sae_type = sae_type.strip()
+        if not sae_type:
+            continue
+        for block in parse_int_list(args.blocks):
+            for frac in parse_float_list(args.fracs):
+                for seed in parse_int_list(args.seeds):
+                    frac_tag = f"{frac:.4f}".rstrip("0").rstrip(".")
+                    out = os.path.join(args.out_root, f"{sae_type}_b{block}_f{frac_tag}_s{seed}")
+                    jobs.append({
+                        "model": args.model,
+                        "block": block,
+                        "frac": frac,
+                        "sae_type": sae_type,
+                        "Kmult": args.Kmult,
+                        "epochs": args.epochs,
+                        "ntrain": args.ntrain,
+                        "nval": args.nval,
+                        "train_bs": args.train_bs,
+                        "val_bs": args.val_bs,
+                        "num_workers": args.num_workers,
+                        "lr": args.lr,
+                        "seed": seed,
+                        "data_seed": args.data_seed,
+                        "out": out,
+                    })
     return jobs
 
 
@@ -94,6 +99,7 @@ def run(jobs, gpus):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", default="vit_small_patch16_224")
+    ap.add_argument("--sae_types", default="field")
     ap.add_argument("--blocks", default="2,4,6,8,10")
     ap.add_argument("--fracs", default="0.01,0.02,0.05,0.08,0.12")
     ap.add_argument("--seeds", default="0,1,2")
@@ -117,6 +123,7 @@ def main():
     logs = run(jobs, gpus)
     summary = {
         "model": args.model,
+        "sae_types": [x for x in args.sae_types.split(",") if x],
         "blocks": parse_int_list(args.blocks),
         "fracs": parse_float_list(args.fracs),
         "seeds": parse_int_list(args.seeds),

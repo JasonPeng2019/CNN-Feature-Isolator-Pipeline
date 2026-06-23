@@ -186,6 +186,8 @@ This is the first full transformer-side sweep rather than a single transfer arti
 - Mean `pred_agree` across all `75` runs: `0.8914`
 - Mean `kl` across all `75` runs: `0.1082`
 - Best single run: `block=10`, retained fraction about `12%`, `seed=1`, `pred_agree = 0.9340`
+- Meaningful maximum for this metric: `pred_agree = 1.0000`, since the target is exact agreement with the original ViT prediction on each validation example
+- Previous one-off ViT artifact for reference: `pred_agree = 0.9440` on the earlier single transfer run (`vit_sae`)
 
 ### Best stable settings (mean over 3 seeds)
 
@@ -195,6 +197,14 @@ This is the first full transformer-side sweep rather than a single transfer arti
 | 4 | 8% | 0.9273 | 0.0038 | 0.0463 | 0.3814 |
 | 10 | 8% | 0.9187 | 0.0034 | 0.0456 | 0.4177 |
 | 4 | 12% | 0.9173 | 0.0050 | 0.0403 | 0.3188 |
+
+The best stable cell is therefore:
+
+- `block=10`, retained `12%`
+- mean `pred_agree = 0.9307`
+- seed std `= 0.0034`
+- per-seed values: `0.9260`, `0.9340`, `0.9320`
+- gap to meaningful max (`1.0000`): `0.0693`
 
 ### Aggregate trends
 
@@ -214,12 +224,166 @@ Mean `pred_agree` by retained fraction:
 - `8%`: `0.9075`
 - `12%`: `0.9129`
 
+Retained-fraction view relative to the meaningful max (`pred_agree = 1.0000`):
+
+| Retained | Mean Pred Agree | Seed Std | Mean KL | Gap To Max |
+|---|---:|---:|---:|---:|
+| 1% | 0.8569 | 0.0193 | 0.2129 | 0.1431 |
+| 2% | 0.8827 | 0.0151 | 0.1317 | 0.1173 |
+| 5% | 0.8971 | 0.0143 | 0.0855 | 0.1029 |
+| 8% | 0.9075 | 0.0163 | 0.0619 | 0.0925 |
+| 12% | 0.9129 | 0.0118 | 0.0490 | 0.0871 |
+
+### Full mean table (all block × retained combinations)
+
+| Block | Retained | Mean Pred Agree | Seed Std | Mean KL |
+|---|---:|---:|---:|---:|
+| 2 | 1% | 0.8520 | 0.0150 | 0.2097 |
+| 2 | 2% | 0.8873 | 0.0100 | 0.1218 |
+| 2 | 5% | 0.8953 | 0.0077 | 0.0754 |
+| 2 | 8% | 0.9107 | 0.0118 | 0.0525 |
+| 2 | 12% | 0.9127 | 0.0034 | 0.0405 |
+| 4 | 1% | 0.8653 | 0.0090 | 0.1740 |
+| 4 | 2% | 0.8967 | 0.0050 | 0.1030 |
+| 4 | 5% | 0.9053 | 0.0025 | 0.0627 |
+| 4 | 8% | 0.9273 | 0.0038 | 0.0463 |
+| 4 | 12% | 0.9173 | 0.0050 | 0.0403 |
+| 6 | 1% | 0.8467 | 0.0127 | 0.2377 |
+| 6 | 2% | 0.8720 | 0.0071 | 0.1507 |
+| 6 | 5% | 0.8840 | 0.0085 | 0.0999 |
+| 6 | 8% | 0.8907 | 0.0066 | 0.0745 |
+| 6 | 12% | 0.9027 | 0.0025 | 0.0628 |
+| 8 | 1% | 0.8367 | 0.0050 | 0.3004 |
+| 8 | 2% | 0.8627 | 0.0050 | 0.1827 |
+| 8 | 5% | 0.8853 | 0.0075 | 0.1241 |
+| 8 | 8% | 0.8900 | 0.0000 | 0.0908 |
+| 8 | 12% | 0.9013 | 0.0082 | 0.0653 |
+| 10 | 1% | 0.8840 | 0.0049 | 0.1427 |
+| 10 | 2% | 0.8947 | 0.0082 | 0.1002 |
+| 10 | 5% | 0.9153 | 0.0109 | 0.0653 |
+| 10 | 8% | 0.9187 | 0.0034 | 0.0456 |
+| 10 | 12% | 0.9307 | 0.0034 | 0.0361 |
+
 ### Interpretation
 
 - The original ViT artifact was not a fluke: the sweep shows a broad region of stable, nontrivial self-consistency rather than a single lucky cell.
 - Later blocks are generally better than middle blocks, but the best regime is not simply “deeper is always better”; block `4` is unusually strong and competitive with block `10`.
 - Increasing retained fraction helps monotonically on average, with a clear improvement from `1%` to `8–12%`.
 - The most paper-robust current claim is therefore not “one ViT cell worked,” but that **ViT token-grid sparse reconstruction is stable across multiple blocks and seeds, with best settings sustaining about `0.93` prediction agreement on Imagenette validation.**
+
+## Experiment 7: ViT-Base Sweep on Imagenette (`vit_base_imagenette_full`)
+
+### What it tested
+
+This is the first completed larger-model ViT sweep in the repo:
+
+- model: `vit_base_patch16_224`
+- blocks: `2, 4, 6, 8, 10`
+- requested retained fractions: `2%`, `5%`, `8%`, `12%`
+- seeds: `0, 1, 2`
+- train subset: `2000` Imagenette train images per run
+- validation subset: `500` Imagenette val images per run
+
+### Completion
+
+- `60/60` jobs completed successfully
+- `60/60` `vit_result.json` files were recovered
+- no duplicate requested `(block, frac, seed)` triplets were found
+
+### Headline results
+
+- Best single run: `block=10`, requested retained fraction `12%`, `seed=1`, `pred_agree = 0.9862`
+- Meaningful maximum for this metric: `pred_agree = 1.0000`
+- Larger-model best stable setting gap to max: only `0.0149`
+- The raw mean across all `60` runs is only `0.6606`, but that average is heavily distorted by seed-collapse cells and should not be read as the main story
+
+### Best stable settings (mean over 3 seeds)
+
+| Block | Requested Retained | Mean Pred Agree | Seed Std | Mean KL | Mean Rel L2 | Collapsed Seeds |
+|---|---:|---:|---:|---:|---:|---:|
+| 10 | 12% | 0.9851 | 0.0012 | 0.0063 | 0.2932 | 0 |
+| 10 | 8% | 0.9790 | 0.0023 | 0.0101 | 0.3583 | 0 |
+| 2 | 8% | 0.9787 | 0.0014 | 0.0077 | 0.3342 | 0 |
+| 2 | 5% | 0.9745 | 0.0006 | 0.0107 | 0.3924 | 0 |
+| 10 | 2% | 0.9690 | 0.0015 | 0.0222 | 0.4570 | 0 |
+
+The best stable cell is therefore:
+
+- `block=10`, requested retained `12%`
+- mean `pred_agree = 0.9851`
+- seed std `= 0.0012`
+- per-seed values: `0.9857`, `0.9862`, `0.9834`
+- mean `KL = 0.0063`
+- gap to meaningful max (`1.0000`): `0.0149`
+
+### Aggregate trends
+
+Mean `pred_agree` by requested retained fraction:
+
+- `2%`: `0.7009`
+- `5%`: `0.7704`
+- `8%`: `0.6572`
+- `12%`: `0.5139`
+
+Mean `pred_agree` by block:
+
+- block `2`: `0.8101`
+- block `4`: `0.3220`
+- block `6`: `0.6306`
+- block `8`: `0.5689`
+- block `10`: `0.9714`
+
+Collapse-prone requested settings (`pred_agree < 0.5` on at least one seed): `12 / 20`
+
+Notable collapse examples:
+
+- block `4`, `12%`: seed values `0.9743`, `0.0000`, `0.0000`
+- block `8`, `12%`: seed values `0.0166`, `0.9654`, `0.9676`
+- block `2`, `12%`: seed values `0.9804`, `0.0000`, `0.0003`
+- block `6`, `8%`: seed values `0.9661`, `0.9682`, `0.0025`
+
+### Realized-vs-requested sparsity note
+
+This sweep exposed a real analysis wrinkle: the realized `frac_retained` recorded in the run JSON can drift materially from the requested sweep fraction in collapse-prone seeds. The analysis therefore groups runs by the requested fraction recovered from the run directory name, not by rounded realized `frac_retained`.
+
+Examples:
+
+- requested `5%`, block `10`, one seed realized only about `2.78%`
+- requested `8%`, block `6`, one seed realized only about `2.99%`
+- requested `12%`, block `2`, one seed realized only about `3.36%`
+
+### Full mean table (all block × requested retained combinations)
+
+| Block | Requested Retained | Mean Pred Agree | Seed Std | Mean KL | Collapsed Seeds |
+|---|---:|---:|---:|---:|---:|
+| 2 | 2% | 0.9602 | 0.0026 | 0.0254 | 0 |
+| 2 | 5% | 0.9745 | 0.0006 | 0.0107 | 0 |
+| 2 | 8% | 0.9787 | 0.0014 | 0.0077 | 0 |
+| 2 | 12% | 0.3269 | 0.4621 | 4.1514 | 2 |
+| 4 | 2% | 0.3167 | 0.4470 | 3.8476 | 2 |
+| 4 | 5% | 0.3222 | 0.4544 | 3.8807 | 2 |
+| 4 | 8% | 0.3242 | 0.4584 | 4.1534 | 2 |
+| 4 | 12% | 0.3248 | 0.4593 | 3.9818 | 2 |
+| 6 | 2% | 0.6319 | 0.4468 | 1.8281 | 1 |
+| 6 | 5% | 0.9620 | 0.0015 | 0.0208 | 0 |
+| 6 | 8% | 0.6456 | 0.4547 | 1.8513 | 1 |
+| 6 | 12% | 0.2830 | 0.3975 | 3.6029 | 2 |
+| 8 | 2% | 0.6265 | 0.4365 | 1.6623 | 1 |
+| 8 | 5% | 0.6409 | 0.4393 | 1.5287 | 1 |
+| 8 | 8% | 0.3582 | 0.4292 | 2.8919 | 2 |
+| 8 | 12% | 0.6499 | 0.4478 | 1.7070 | 1 |
+| 10 | 2% | 0.9690 | 0.0015 | 0.0222 | 0 |
+| 10 | 5% | 0.9524 | 0.0355 | 0.0783 | 0 |
+| 10 | 8% | 0.9790 | 0.0023 | 0.0101 | 0 |
+| 10 | 12% | 0.9851 | 0.0012 | 0.0063 | 0 |
+
+### Interpretation
+
+- The larger model can do much better than the ViT-small sweep when it lands in the stable regime: the best stable `ViT-Base` cell reaches about `0.985` prediction agreement versus about `0.931` for the best stable `ViT-small` cell.
+- The larger model is also much less uniformly stable. Outside the late `block 10` regime, many settings become sharply bimodal across seeds, with one or two seeds preserving the original ViT behavior and another collapsing almost completely.
+- `block 10` is the clean winner on the larger model. `block 2` also has several strong cells, but becomes fragile at requested `12%`.
+- The raw across-cell averages are misleading on this run family because they conflate near-perfect cells with catastrophic collapse cells. The right summary is therefore "excellent stable late-block regime plus substantial off-regime seed fragility," not simply one scalar sweep average.
+- A likely follow-up target is the realized-vs-requested sparsity drift itself: several collapse seeds retain far less than the requested budget, which may reflect mask-threshold / tie pathology or another seed-sensitive failure mode.
 
 ## Overall Phase 4 Takeaways
 
@@ -231,6 +395,7 @@ Phase 4 substantially strengthens the whole project:
 4. The deeper-backbone story remains consistent, including the persistent `Q3` bottleneck (`r110`).
 5. The transfer path to ViTs moved from “blocked” to “real executed artifact” (`vit_sae`).
 6. The transformer-side path now has a completed sweep, and the completed sweep shows stable rather than seed-lucky behavior (`vit_sweep`).
+7. The larger-model ViT path reaches a much stronger best-case regime, but it also reveals a new fragility story: `ViT-Base` is excellent at late blocks and substantially less stable elsewhere (`vit_base_imagenette_full`).
 
 ## Bottom Line
 
