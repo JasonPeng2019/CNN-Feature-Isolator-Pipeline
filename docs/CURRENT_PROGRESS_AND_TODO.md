@@ -1,6 +1,6 @@
 # Current Progress And To Do
 
-Last updated: 2026-06-22
+Last updated: 2026-06-26
 
 This file is a handoff document for autonomous continuation of the `CNN-SAE` project inside `ViT_Proj`.
 
@@ -35,6 +35,8 @@ Main achieved conclusions:
 - The `Q3` region remains the persistent bottleneck across multiple families.
 - A ViT transfer artifact already exists and is one of the cleanest results in the repo.
 - A full ViT-small block/fraction/seed sweep on Imagenette has now completed cleanly and shows stable signal rather than a one-off artifact.
+- A completed ViT-small SAE-family comparison now exists (`field` vs `vector`).
+- A completed ViT-base sweep now exists and shows a strong non-collapse regime plus a real collapse/instability regime.
 
 ## What Has Been Achieved
 
@@ -54,6 +56,8 @@ The following are already present and should be treated as completed unless a cl
 - Taxonomy comparison at `Q4 -> Q5`
 - Initial ViT transfer on Imagenette
 - Full ViT-small Imagenette sweep over blocks, retained fractions, and seeds
+- Full ViT-small SAE-family comparison over the same grid (`phase4_changed`)
+- Full ViT-base Imagenette sweep over blocks, retained fractions, and seeds
 - Run-ready scale-up infrastructure for larger ViT models and generic ImageFolder-style datasets
 
 Useful surviving result families:
@@ -66,6 +70,8 @@ Useful surviving result families:
 - `runs/taxonomy/`
 - `runs/vit_sae/vit_result.json`
 - `runs/vit_sweep/`
+- `runs/phase4_changed/`
+- `runs/vit_base_imagenette_full/`
 - `runs/smoke_vit_scale_grid/`
 
 Key reported Phase 4 results:
@@ -80,6 +86,22 @@ Key newly completed ViT sweep results:
 - Mean `pred_agree` across all runs is about `0.8914`.
 - The strongest stable setting found so far is `block 10`, retained fraction about `0.12`, with mean `pred_agree ≈ 0.9307`, seed std `≈ 0.0034`, and mean `kl ≈ 0.0361`.
 - Another strong stable setting is `block 4`, retained fraction about `0.08`, with mean `pred_agree ≈ 0.9273` and seed std `≈ 0.0038`.
+
+Key newly completed ViT family-comparison results:
+
+- `150/150` ViT-small `field`/`vector` comparison jobs completed successfully under `runs/phase4_changed/`.
+- `vector` wins `16/25` block/fraction settings by mean `pred_agree`, but `field` wins the raw overall mean because its wins in the harsh low-budget early-block regime are larger.
+- If `vector` runs with catastrophic reconstruction loss are filtered out (`rel_l2 <= 0.50` only), matched-cell `vector` mean `pred_agree` rises to about `0.9134` versus about `0.9051` for matched `field`.
+
+Key newly completed ViT-base results:
+
+- `60/60` ViT-base sweep jobs completed successfully under `runs/vit_base_imagenette_full/`.
+- Best stable setting so far is `block 10`, retained fraction about `0.12`, with mean `pred_agree ≈ 0.9851`.
+- The main failure mode is not a clean sparse-sufficiency failure after good reconstruction; it is SAE reconstruction collapse / instability.
+- Under the practical split `rel_l2 > 1` or `fvu > 1` = reconstruction collapse:
+  - collapse runs: `19`
+  - non-collapse runs: `41`
+  - non-collapse mean `pred_agree ≈ 0.9627`
 
 ## Important Existing Code Paths
 
@@ -124,6 +146,15 @@ There are two immediate priorities:
 1. Make the project more paper-robust.
 2. Produce interpretable qualitative artifacts from learned sparse features across arbitrary images and classes.
 
+Strategic recommendation:
+
+- Do **not** spend the main project budget trying to perfect `ViT-small`.
+- Use `ViT-small` as a cheap debugging sandbox for training and SAE-architecture ideas.
+- Put the main effort into:
+  - stabilizing `ViT-base`
+  - adding a genuinely larger CNN
+  - building the interpretability / visualization pipeline on the stronger models
+
 ### Priority A: Paper Robustness
 
 These are the most important next steps.
@@ -134,10 +165,13 @@ These are the most important next steps.
 2. Continue scaling the now-completed ViT experiment family.
    The ViT path is no longer a single artifact; it now has a completed sweep and a run-ready scale-up launcher for larger models/datasets.
 
-3. Scale beyond toy/backbone-limited settings.
-   The strongest next backbone target is ResNet-50 on ImageNet-scale data.
+3. Prioritize `ViT-base` stabilization over `ViT-small` polishing.
+   The most important transformer-side story now is that `ViT-base` works very well when SAE reconstruction succeeds, but can collapse under some settings. New work should target training stability, SAE design, and collapse prevention on `ViT-base`.
 
-4. Add more uncertainty estimates and ablations.
+4. Scale beyond toy/backbone-limited settings on the CNN side.
+   The strongest next backbone target is ResNet-50 on ImageNet-scale data. The current `ResNet-110` result is useful, but it is still only a midsize CNN rather than a true large-CNN counterpart to the ViT-base experiment.
+
+5. Add more uncertainty estimates and ablations.
    Multi-seed summaries, confidence intervals, and `Kmult` / width / budget ablations are needed for stronger claims.
 
 ### Priority B: Feature Interpretability
@@ -256,10 +290,21 @@ Why:
 
 - This is the single most important next CNN-side credibility jump.
 - The repo itself already identifies this as the major reviewer ask.
+- The current CNN scale-up (`ResNet-110`, about `1.7M` params) is only a moderate step beyond the original CIFAR backbone, not a true large-CNN test.
 
 ### 5. Larger ViT Scale-Up Runs
 
-Status: run-ready, not yet executed at full scale
+Status: partially complete
+
+Completed larger-model evidence:
+
+- `vit_base_patch16_224` sweep under `runs/vit_base_imagenette_full/`
+- completed analysis tables and figure generation for that run family
+
+What this means strategically:
+
+- the next transformer-side priority is **not** another `ViT-small` polish loop
+- it is stabilizing the existing `ViT-base` regime and then scaling beyond it if the collapse story improves
 
 Completed infrastructure:
 
@@ -277,7 +322,13 @@ What this enables:
 - full available validation sets
 - future ImageFolder-style dataset roots beyond Imagenette
 
-Recommended first larger-model run:
+Recommended first transformer-side stabilization / continuation runs:
+
+1. Retry `ViT-base` with training and SAE-architecture changes aimed specifically at reducing collapse.
+2. Use `ViT-small` only as a fast smoke-test / debugging platform for those same changes.
+3. Only after `ViT-base` stability improves, consider stepping to an even larger ViT.
+
+Historical first larger-model run:
 
 ```bash
 cd /jumbo/lisp/f003x5w/ViT_Proj/CNN-SAE
@@ -299,7 +350,7 @@ python scripts/run_vit_scale_grid.py \
   --out_root runs/vit_base_imagenette_full
 ```
 
-Recommended multi-model comparison run:
+Recommended cross-model comparison run:
 
 ```bash
 cd /jumbo/lisp/f003x5w/ViT_Proj/CNN-SAE
@@ -326,12 +377,12 @@ python scripts/run_vit_scale_grid.py \
 If the goal is autonomous high-value progress, follow this order:
 
 1. Add clean validation handling for new experiments.
-2. Build the feature-visualization script for the completed ViT winners.
-3. Add seed-universality analysis on the strongest stable ViT setting(s).
-4. Launch the larger-model ViT scale-up run(s), starting with `vit_base_patch16_224`.
-5. Extend the taxonomy comparison beyond `Q4 -> Q5`.
+2. Build the feature-visualization / sparse-feature export pipeline for the strongest completed ViT and CNN settings.
+3. Use `ViT-small` as a cheap sandbox to test training and SAE-architecture changes.
+4. Apply those changes to `ViT-base` and target collapse reduction.
+5. Add seed-universality analysis on the strongest stable settings.
 6. Add ResNet-50 support and start activation caching.
-7. Only after that, move to ViT-B/16 or a second CNN family.
+7. After `ViT-base` is more stable and a larger CNN exists, move to bigger ViTs or a second CNN family.
 
 ## Recommended GPU Usage
 
@@ -358,6 +409,7 @@ This is only a suggestion. Always re-check `nvidia-smi` before launching a large
 - Do not re-run already completed CIFAR sweeps unless the purpose is a clean rerun under improved evaluation hygiene.
 - Do not treat the archived `report/` folder as the main source of truth.
 - Do not treat the single ViT artifact as sufficient scale evidence.
+- Do not spend the main project budget trying to make `ViT-small` perfect; use it as a debugging platform.
 - Do not stop at top-activating montages; the next qualitative step needs per-feature spatial overlays and decoder-side views.
 
 ## Definition Of Success For The Next Agent

@@ -36,6 +36,13 @@ This is a scale-down and dataset-shift stress test of the winner recipe:
 
 ### Final results
 
+These table entries are **spliced top-1 classification accuracy** on the real dataset labels after replacing the section with the sparse reconstruction. They are **not** `pred_agree`.
+
+Baseline for comparison:
+
+- frozen ResNet-20 / CIFAR-10 backbone top-1 is about `0.923`
+- for `pred_agree`, the meaningful maximum is `1.0000`
+
 | Section | 2% | 5% | 10% |
 |---|---:|---:|---:|
 | Q1 | 0.9220 | 0.9217 | 0.9221 |
@@ -67,6 +74,13 @@ This is a robustness check on the winner setup:
 - `15/15` cells completed successfully
 
 ### Final results by section
+
+These table entries are again **spliced top-1 classification accuracy** on CIFAR-100 labels, not `pred_agree`. They answer: after sparse reconstruction at `5%`, how often does the modified model still classify the real label correctly?
+
+Baseline for comparison:
+
+- frozen ResNet-56 / CIFAR-100 backbone top-1 is `0.7183`
+- for `pred_agree`, the meaningful maximum is `1.0000`
 
 | Section | Seed 0 | Seed 1 | Seed 2 | Mean |
 |---|---:|---:|---:|---:|
@@ -271,7 +285,121 @@ Retained-fraction view relative to the meaningful max (`pred_agree = 1.0000`):
 - Increasing retained fraction helps monotonically on average, with a clear improvement from `1%` to `8–12%`.
 - The most paper-robust current claim is therefore not “one ViT cell worked,” but that **ViT token-grid sparse reconstruction is stable across multiple blocks and seeds, with best settings sustaining about `0.93` prediction agreement on Imagenette validation.**
 
-## Experiment 7: ViT-Base Sweep on Imagenette (`vit_base_imagenette_full`)
+## Experiment 7: ViT-Small SAE Family Comparison (`phase4_changed`)
+
+### What it tested
+
+This run family compares two SAE choices on the same completed `ViT-small` sweep grid:
+
+- model: `vit_small_patch16_224`
+- SAE families: `field`, `vector`
+- blocks: `2, 4, 6, 8, 10`
+- retained fractions: `1%`, `2%`, `5%`, `8%`, `12%`
+- seeds: `0, 1, 2`
+- train subset: `2000` Imagenette train images per run
+- validation subset: `500` Imagenette val images per run
+
+Experiment 6 was `field`-only. This experiment asks whether the weaker `ViT-small` results were partly an SAE-family mismatch rather than purely a transformer difficulty story.
+
+### Completion
+
+- `150/150` jobs completed successfully
+- `75/75` `field` runs were recovered
+- `75/75` `vector` runs were recovered
+
+### Headline results
+
+Overall mean performance by SAE family:
+
+| SAE | Mean Pred Agree | Mean KL | Mean Rel L2 |
+|---|---:|---:|---:|
+| field | 0.8914 | 0.1082 | 0.4678 |
+| vector | 0.8887 | 0.1144 | 0.4448 |
+
+The aggregate means are close, but they hide real structure:
+
+- `vector` wins on `16/25` block/fraction settings by mean `pred_agree`
+- `field` wins on `9/25` settings
+- `field` is stronger at the harshest low-budget early-block settings
+- `vector` is stronger in many later-block and higher-budget settings
+
+### Best stable settings
+
+Best stable `field` settings:
+
+| SAE | Block | Retained | Mean Pred Agree | Seed Std | Mean KL | Mean Rel L2 |
+|---|---:|---:|---:|---:|---:|---:|
+| field | 10 | 12% | 0.9307 | 0.0034 | 0.0361 | 0.3558 |
+| field | 4 | 8% | 0.9273 | 0.0038 | 0.0463 | 0.3814 |
+| field | 10 | 8% | 0.9187 | 0.0034 | 0.0456 | 0.4177 |
+
+Best stable `vector` settings:
+
+| SAE | Block | Retained | Mean Pred Agree | Seed Std | Mean KL | Mean Rel L2 |
+|---|---:|---:|---:|---:|---:|---:|
+| vector | 10 | 12% | 0.9393 | 0.0074 | 0.0201 | 0.3361 |
+| vector | 2 | 12% | 0.9380 | 0.0102 | 0.0236 | 0.2400 |
+| vector | 4 | 12% | 0.9367 | 0.0066 | 0.0263 | 0.2747 |
+
+The strongest completed `ViT-small` family result is therefore now:
+
+- `vector`, block `10`, retained `12%`
+- mean `pred_agree = 0.9393`
+- seed std `= 0.0074`
+- mean `KL = 0.0201`
+
+### Matched filtered comparison: remove only catastrophic vector reconstruction-loss runs
+
+One especially useful diagnostic is to ask what happens if we remove the `vector` runs with clearly bad reconstruction quality and compare against `field` on those **exact same** `(block, frac, seed)` cells.
+
+Using the filter:
+
+- keep only `vector` runs with `rel_l2 <= 0.50`
+
+the matched comparison becomes:
+
+| Group | Run Count | Mean Pred Agree | Mean Rel L2 |
+|---|---:|---:|---:|
+| kept `vector` runs (`rel_l2 <= 0.50`) | 48 | 0.9134 | 0.3745 |
+| matched `field` runs on those same cells | 48 | 0.9051 | 0.4026 |
+
+For the dropped `vector` runs:
+
+| Group | Run Count | Mean Pred Agree | Mean Rel L2 |
+|---|---:|---:|---:|
+| dropped `vector` runs (`rel_l2 > 0.50`) | 27 | 0.8447 | 0.5698 |
+| matched `field` runs on those same cells | 27 | 0.8670 | 0.5837 |
+
+This is the key conditional result:
+
+- `vector` loses in the overall unfiltered average because of its bad early-block / ultra-low-budget regime
+- but once those catastrophic high-reconstruction-loss vector runs are removed, `vector` is actually **better** than `field` on the matched cells
+
+How good is `0.9134`?
+
+- Here it means the sparsely reconstructed ViT keeps the **same top prediction as the original ViT on about 91.3% of validation examples**
+- that is strong but not near-perfect; it is behavior-preserving enough to support the sparse-sufficiency story, while still leaving a visible gap to the ideal `1.0000`
+
+Representative paired deltas in mean `pred_agree` (`vector - field`):
+
+- block `2`, `1%`: `-0.0807`
+- block `4`, `1%`: `-0.0780`
+- block `2`, `12%`: `+0.0253`
+- block `8`, `12%`: `+0.0220`
+- block `10`, `12%`: `+0.0087`
+
+### Interpretation
+
+- The earlier `ViT-small` sweep should now be read as “field-only ViT-small,” not as the final word on ViT-small.
+- Changing SAE family helps somewhat, especially in the strongest later-block / higher-budget regime.
+- But the gains are not large enough to remove the main ambiguity by themselves.
+
+So after Experiment 7, both explanations are still alive:
+
+- the current SAE family/design may still be limiting ViT recovery
+- transformer activations may also be inherently harder to recover sparsely than the CNN activations
+
+## Experiment 8: ViT-Base Sweep on Imagenette (`vit_base_imagenette_full`)
 
 ### What it tested
 
@@ -352,6 +480,38 @@ Examples:
 - requested `8%`, block `6`, one seed realized only about `2.99%`
 - requested `12%`, block `2`, one seed realized only about `3.36%`
 
+### Separate SAE Reconstruction Collapse From SAE Success
+
+To make the sparsity-theory question easier to read, it helps to separate:
+
+- `SAE reconstruction collapse`: the SAE itself failed to reconstruct the activation map well
+- `SAE non-collapse`: the SAE reconstructed the activation map in a quantitatively reasonable regime, regardless of whether `pred_agree` was perfect
+
+For this sweep, a practical reconstruction-collapse rule is:
+
+- `rel_l2 > 1` or `fvu > 1`
+
+Under that rule:
+
+| Group | Run Count | Mean Pred Agree | Mean Rel L2 | Mean FVU |
+|---|---:|---:|---:|---:|
+| SAE reconstruction collapse | 19 | 0.0087 | 2.1533 | 11.0939 |
+| SAE non-collapse | 41 | 0.9627 | 0.4424 | 0.2527 |
+
+This is the key disambiguation:
+
+- the dramatic near-zero `pred_agree` cases are overwhelmingly SAE failures
+- the successful SAE reconstructions are, on average, extremely strong
+
+Within the `41` SAE non-collapse runs:
+
+- `0/41` had `pred_agree < 0.5`
+- `41/41` stayed in the behavior-preserving regime
+
+So in this completed `ViT-base` sweep, there is no clear example of:
+
+- “the SAE reconstructed the transformer activations successfully, but the sparsity hypothesis still failed badly downstream”
+
 ### Full mean table (all block × requested retained combinations)
 
 | Block | Requested Retained | Mean Pred Agree | Seed Std | Mean KL | Collapsed Seeds |
@@ -395,7 +555,8 @@ Phase 4 substantially strengthens the whole project:
 4. The deeper-backbone story remains consistent, including the persistent `Q3` bottleneck (`r110`).
 5. The transfer path to ViTs moved from “blocked” to “real executed artifact” (`vit_sae`).
 6. The transformer-side path now has a completed sweep, and the completed sweep shows stable rather than seed-lucky behavior (`vit_sweep`).
-7. The larger-model ViT path reaches a much stronger best-case regime, but it also reveals a new fragility story: `ViT-Base` is excellent at late blocks and substantially less stable elsewhere (`vit_base_imagenette_full`).
+7. The ViT-small result is not tied to one SAE family: `vector` improves several later-block / higher-budget settings, although it does not resolve the whole transformer-vs-SAE ambiguity (`phase4_changed`).
+8. The larger-model ViT path reaches a much stronger best-case regime, but its dramatic failures are mostly SAE reconstruction failures rather than clean counterexamples to sparse sufficiency after good reconstruction (`vit_base_imagenette_full`).
 
 ## Bottom Line
 
