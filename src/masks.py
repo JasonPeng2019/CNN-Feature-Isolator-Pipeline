@@ -12,13 +12,89 @@ import torch
 import torch.nn.functional as F
 
 
+def standardize_selection_scores(scores, min_std=0.1):
+    """Standardize each sample's flattened selection scores in FP32."""
+    if scores.ndim < 2:
+        raise ValueError("scores must include a batch dimension and field dimensions")
+    flat = scores.float().reshape(scores.shape[0], -1)
+    mean = flat.mean(dim=1, keepdim=True)
+    # Population std is finite for a one-entry field and is sufficient for a
+    # ranking surrogate.  The floor keeps temperature units well-conditioned.
+    std = flat.std(dim=1, keepdim=True, unbiased=False).clamp_min(float(min_std))
+    return ((flat - mean) / std).reshape_as(flat)
+
+
+def _exact_topm_mask(flat_scores, m):
+    """Return a deterministic exact-M mask and flattened indices."""
+    if flat_scores.ndim != 2:
+        raise ValueError("flat_scores must have shape (batch, candidates)")
+    if int(m) < 1:
+        raise ValueError(f"m must be positive, got {m}")
+    count = min(int(m), flat_scores.shape[1])
+    # A tiny index-order perturbation resolves equal FP32 scores while staying
+    # below one ULP of the standardized score scale.  This is only a tie rule;
+    # all ordinary score gaps retain their original ordering.
+    scale = flat_scores.detach().abs().amax(dim=1, keepdim=True).clamp_min(1.0)
+    epsilon = torch.finfo(torch.float32).eps * scale / max(1, flat_scores.shape[1])
+    index = torch.arange(flat_scores.shape[1], device=flat_scores.device, dtype=torch.float32).view(1, -1)
+    ranked = flat_scores + index * epsilon
+    indices = ranked.topk(count, dim=1, sorted=False).indices
+    hard = torch.zeros_like(flat_scores, dtype=torch.bool)
+    hard.scatter_(1, indices, True)
+    return hard, indices
+
+
+def exact_topm(scores, m):
+    """Select exactly ``m`` entries per sample from FP32 score logits."""
+    flat = scores.float().reshape(scores.shape[0], -1)
+    hard, indices = _exact_topm_mask(flat, m)
+    return hard.reshape_as(scores), indices
+
+
+def select_topm(values, scores, m, temperature=0.1):
+    """Apply exact Top-M with a hard-forward straight-through selector.
+
+    ``scores`` is an unconstrained selection head and is standardized per
+    sample in FP32.  ``values`` is a separate signed value head.  The returned
+    coefficient field is hard masked in the forward pass, while the detached
+    sigmoid surrogate supplies finite selector gradients during training.
+    """
+    if values.shape != scores.shape:
+        raise ValueError(f"values and scores must have equal shape, got {values.shape} and {scores.shape}")
+    if float(temperature) <= 0:
+        raise ValueError("temperature must be positive")
+    score_flat = standardize_selection_scores(scores)
+    hard_flat, indices = _exact_topm_mask(score_flat, m)
+    count = hard_flat.shape[1] if int(m) >= hard_flat.shape[1] else int(m)
+    # The threshold is detached deliberately: the sigmoid is a surrogate for
+    # support selection, not an extra score objective.
+    threshold = score_flat.topk(count, dim=1, sorted=True).values[:, -1:].detach()
+    soft_flat = torch.sigmoid((score_flat - threshold) / float(temperature))
+    ste_flat = hard_flat.to(torch.float32) + soft_flat - soft_flat.detach()
+    selected = values.float().reshape(values.shape[0], -1) * ste_flat
+    return selected.reshape_as(values.float()), hard_flat.reshape_as(values), indices
+
+
+def encode_and_select(net, activation, m, temperature=0.1):
+    """Encode a redo activation and apply its exact sparse-message operator.
+
+    Redo families must expose ``encode_sparse`` so score logits and signed
+    values remain independent.  Legacy models intentionally fail here rather
+    than silently entering a scientifically different fallback path.
+    """
+    if not hasattr(net, "encode_sparse"):
+        raise TypeError("redo SAE must expose independent score/value encode_sparse")
+    return net.encode_sparse(activation, m, temperature=temperature)
+
+
 def mask_global_topk(z, m):
     """Keep the top-`m` coefficients over all (K,H,W) per sample. z: (B,K,H,W)."""
     B, K, H, W = z.shape
     flat = z.reshape(B, -1)
-    m = min(m, flat.shape[1])
-    thresh = flat.topk(m, dim=1).values[:, -1:].clamp_min(torch.finfo(flat.dtype).tiny)
-    keep = flat >= thresh
+    if m < 1:
+        raise ValueError(f"m must be positive, got {m}")
+    m = min(int(m), flat.shape[1])
+    keep, _ = _exact_topm_mask(flat, m)
     return (flat * keep).reshape(B, K, H, W), keep.reshape(B, K, H, W)
 
 

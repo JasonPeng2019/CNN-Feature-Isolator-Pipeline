@@ -91,12 +91,19 @@ Why:
 - ViT activations may need a larger overcomplete basis
 - the sparse support can still stay small in percentage terms while the dictionary becomes richer
 
-### 5. Make the `Field` SAE wider / deeper
+### 5. Make the `Field` SAE deeper first, then wider
 
 Idea:
 
-- move from roughly `d = 2C`, `n_blocks = 3`
-- to something like `d = 4C`, `n_blocks = 4-6`
+- first increase depth while keeping the overall architecture the same
+- then increase width if depth alone helps but is still not enough
+
+Why depth should come first:
+
+- the current `Field` SAE may simply be underpowered
+- this is the least disruptive architectural hypothesis to test
+- for large, complex activation maps, `3` residual local blocks per side may simply not be expressive enough
+- if a deeper plain `Field` SAE already improves performance, that is a cleaner and more interpretable result than immediately jumping to more exotic block designs
 
 Why:
 
@@ -105,8 +112,10 @@ Why:
 
 Recommended first settings:
 
-- `d = 4C`, `n_blocks = 4`
-- `d = 4C`, `n_blocks = 6`
+- `d = 2C`, `n_blocks = 6`
+- `d = 2C`, `n_blocks = 8`
+- then `d = 4C`, `n_blocks = 6`
+- then `d = 4C`, `n_blocks = 8`
 
 ### 6. Add a small downstream KL term after reconstruction stabilizes
 
@@ -211,7 +220,7 @@ The most likely near-term story is:
 That is why the first effort should be:
 
 - training fixes first
-- moderate capacity increase second
+- deeper / wider plain `Field` second
 - architecture redesign third
 
 ## How to use this note

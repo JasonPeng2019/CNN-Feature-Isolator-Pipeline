@@ -15,7 +15,8 @@ def _stats(dataset):
     return (CIFAR100_MEAN, CIFAR100_STD) if dataset == "cifar100" else (CIFAR10_MEAN, CIFAR10_STD)
 
 
-def get_loaders(dataset="cifar100", root="./data", batch_size=128, num_workers=4, augment=True):
+def get_loaders(dataset="cifar100", root="./data", batch_size=128, num_workers=4,
+                augment=True, shuffle_train=True):
     mean, std = _stats(dataset)
     train_tf = transforms.Compose(
         ([transforms.RandomCrop(32, padding=4), transforms.RandomHorizontalFlip()] if augment else [])
@@ -25,7 +26,7 @@ def get_loaders(dataset="cifar100", root="./data", batch_size=128, num_workers=4
     DS = datasets.CIFAR100 if dataset == "cifar100" else datasets.CIFAR10
     train = DS(root, train=True, download=True, transform=train_tf)
     test = DS(root, train=False, download=True, transform=test_tf)
-    train_loader = DataLoader(train, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True, drop_last=False)
+    train_loader = DataLoader(train, batch_size=batch_size, shuffle=shuffle_train, num_workers=num_workers, pin_memory=True, drop_last=False)
     test_loader = DataLoader(test, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=True)
     return train_loader, test_loader
 
